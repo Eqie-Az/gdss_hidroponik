@@ -3,8 +3,8 @@
 
 require_once __DIR__ . '/../models/AlternatifModel.php';
 require_once __DIR__ . '/../models/KriteriaModel.php';
-require_once __DIR__ . '/../models/SubkriteriaModel.php';
 require_once __DIR__ . '/../models/PenggunaModel.php';
+
 
 class MasterDataController extends Controller
 {
@@ -74,79 +74,6 @@ class MasterDataController extends Controller
         $model->delete($id);
 
         $this->redirect('MasterData/kriteria');
-    }
-
-    // ==========================================================
-    // BAGIAN SUBKRITERIA
-    // ==========================================================
-
-    public function subkriteria()
-    {
-        $this->requireRole(['admin']);
-
-        $kritModel = new KriteriaModel();
-        $subModel = new SubkriteriaModel();
-
-        $kriteria = $kritModel->all();
-        $dataSubkriter = $subModel->allWithKriteria();
-
-        $title = 'Master Subkriteria';
-        $this->view('masterdata/subkriteria', compact('title', 'kriteria', 'dataSubkriter'));
-    }
-
-    public function simpanSubkriteria()
-    {
-        $this->requireRole(['admin']);
-
-        $id_kriteria = (int) ($_POST['id_kriteria'] ?? 0);
-        $kode = $_POST['kode_subkriteria'] ?? '';
-        $nama = $_POST['nama_subkriteria'] ?? '';
-        $bobot = (float) ($_POST['bobot_subkriteria'] ?? 0);
-
-        $model = new SubkriteriaModel();
-        $model->create($id_kriteria, $kode, $nama, $bobot);
-
-        $this->redirect('MasterData/subkriteria');
-    }
-
-    public function editSubkriteria($id)
-    {
-        $this->requireRole(['admin']);
-
-        $subModel = new SubkriteriaModel();
-        $kritModel = new KriteriaModel();
-
-        $data = $subModel->findById($id);
-        $kriteria = $kritModel->all(); // Untuk dropdown
-
-        $title = 'Edit Subkriteria';
-        $this->view('masterdata/edit_subkriteria', compact('title', 'data', 'kriteria'));
-    }
-
-    public function updateSubkriteria()
-    {
-        $this->requireRole(['admin']);
-
-        $id = $_POST['id_subkriteria'];
-        $id_krit = $_POST['id_kriteria'];
-        $kode = $_POST['kode_subkriteria'];
-        $nama = $_POST['nama_subkriteria'];
-        $bobot = $_POST['bobot_subkriteria'];
-
-        $model = new SubkriteriaModel();
-        $model->update($id, $id_krit, $kode, $nama, $bobot);
-
-        $this->redirect('MasterData/subkriteria');
-    }
-
-    public function hapusSubkriteria($id)
-    {
-        $this->requireRole(['admin']);
-
-        $model = new SubkriteriaModel();
-        $model->delete($id);
-
-        $this->redirect('MasterData/subkriteria');
     }
 
     // ==========================================================

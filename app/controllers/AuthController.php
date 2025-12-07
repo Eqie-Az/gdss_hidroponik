@@ -7,38 +7,41 @@ class AuthController extends Controller
 {
     public function index()
     {
-        $title = 'Login';
-        $this->view('auth/login', compact('title'));
+        // Jika sudah login, redirect ke dashboard
+        if (isset($_SESSION['user_id'])) {
+            header('Location: /Dashboard/index');
+            exit;
+        }
+        $this->view('auth/login');
     }
 
     public function login()
-{
-    $this->startSession();
+    {
+        $this->startSession();
 
-    $username = $_POST['username'] ?? '';
-    $password = $_POST['password'] ?? '';
+        $username = $_POST['username'] ?? '';
+        $password = $_POST['password'] ?? '';
 
-    $model = new PenggunaModel();
-    $user  = $model->findByLoginName($username);
+        $model = new PenggunaModel();
+        $user = $model->findByLoginName($username);
 
-    // SEBELUMNYA:
-    // if ($user && password_verify($password, $user['kata_sandi_hash'])) {
+        // SEBELUMNYA:
+        // if ($user && password_verify($password, $user['kata_sandi_hash'])) {
 
-    // GANTI JADI CEK BIASA:
-    if ($user && $password === $user['kata_sandi_hash']) {
+        // GANTI JADI CEK BIASA:
+        if ($user && $password === $user['kata_sandi_hash']) {
 
-        $_SESSION['user_id']   = $user['id_pengguna'];
-        $_SESSION['user_name'] = $user['nama_pengguna'];
-        $_SESSION['user_role'] = $user['peran'];
+            $_SESSION['user_id'] = $user['id_pengguna'];
+            $_SESSION['user_name'] = $user['nama_pengguna'];
+            $_SESSION['user_role'] = $user['peran'];
 
-        $this->redirect('Dashboard/index');
-    } else {
-        $title = 'Login';
-        $error = 'Username atau password salah';
-        $this->view('auth/login', compact('title','error'));
+            $this->redirect('Dashboard/index');
+        } else {
+            $title = 'Login';
+            $error = 'Username atau password salah';
+            $this->view('auth/login', compact('title', 'error'));
+        }
     }
-}
-
 
     public function logout()
     {
@@ -55,10 +58,10 @@ class AuthController extends Controller
 
     public function doRegister()
     {
-        $nama     = $_POST['nama'] ?? '';
+        $nama = $_POST['nama'] ?? '';
         $username = $_POST['username'] ?? '';
         $password = $_POST['password'] ?? '';
-        $peran    = $_POST['peran'] ?? 'dm';
+        $peran = $_POST['peran'] ?? 'dm';
 
         $model = new PenggunaModel();
         $model->create($nama, $username, $password, $peran);
