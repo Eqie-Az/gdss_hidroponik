@@ -5,8 +5,6 @@ $title = $title ?? 'Tambah Alternatif';
 <h2><?= htmlspecialchars($title) ?></h2>
 
 <div class="card mt-2">
-    <h3>Tambah Alternatif</h3>
-
     <form action="<?= BASEURL ?>/MasterData/simpanAlternatif" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="kode_alternatif">Kode Alternatif</label>

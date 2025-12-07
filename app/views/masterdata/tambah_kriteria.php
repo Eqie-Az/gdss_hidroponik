@@ -3,8 +3,6 @@
 <h2><?= htmlspecialchars($title) ?></h2>
 
 <div class="card mt-2">
-    <h3>Tambah Kriteria Baru</h3>
-
     <form action="<?= BASEURL; ?>/MasterData/simpankriteria" method="post">
         <div class="form-group">
             <label>Kode (misal K1)</label>

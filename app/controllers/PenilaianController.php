@@ -7,9 +7,9 @@ class PenilaianController extends Controller
      */
     public function form()
     {
-        // 1. IZINKAN ROLE PETANI
+        // 1. IZINKAN ROLE FARMER
         // Agar farmer2 & farmer3 bisa masuk
-        $this->requireRole(['admin', 'ketua', 'petani']);
+        $this->requireRole(['admin', 'ketua', 'farmer']);
 
         $data['judul'] = 'Input Penilaian';
 
@@ -25,7 +25,7 @@ class PenilaianController extends Controller
      */
     public function simpan()
     {
-        $this->requireRole(['admin', 'ketua', 'petani']);
+        $this->requireRole(['admin', 'ketua', 'farmer']);
         $this->startSession();
 
         $id_pengguna = $_SESSION['user_id'];
@@ -51,7 +51,7 @@ class PenilaianController extends Controller
 
     public function sukses()
     {
-        $this->requireRole(['admin', 'ketua', 'petani']);
+        $this->requireRole(['admin', 'ketua', 'farmer']);
         $data['judul'] = 'Berhasil Disimpan';
         $this->view('penilaian/sukses', $data);
     }

@@ -83,7 +83,7 @@ class AuthController extends Controller
             'nama_lengkap' => $nama,
             'username' => $username,
             'password' => $password,
-            'role' => 'petani' // Default role
+            'role' => 'farmer' // Default role
         ];
 
         // Simpan ke DB

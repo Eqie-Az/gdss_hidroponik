@@ -17,9 +17,9 @@
                 </tr>
             </thead>
             <tbody>
-                <?php if (!empty($borda)): ?>
+                <?php if (!empty($dataBorda)): ?>
                     <?php $no = 1;
-                    foreach ($borda as $row): ?>
+                    foreach ($dataBorda as $row): ?>
                         <tr>
                             <td><?= $no++; ?></td>
                             <td><?= htmlspecialchars($row['nama_lengkap']); ?></td>
@@ -30,8 +30,10 @@
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="5">Belum ada data perhitungan. Silakan jalankan proses terlebih
-                            dahulu.</td>
+                        <td colspan="5" style="text-align: center;">
+                            Belum ada data perhitungan. <br>
+                            Pastikan Anda sudah klik menu <strong>Proses Hitung</strong> > <strong>Jalankan Proses</strong>.
+                        </td>
                     </tr>
                 <?php endif; ?>
             </tbody>

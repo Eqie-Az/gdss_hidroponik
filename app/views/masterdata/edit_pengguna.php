@@ -27,7 +27,8 @@
         <div class="form-group">
             <label>Role</label>
             <select class="input" name="peran">
-                <option value="petani" <?= ($data['role'] == 'petani') ? 'selected' : ''; ?>>Petani (DM)</option>
+                <option value="farmer" <?= ($data['role'] == 'farmer') ? 'selected' : ''; ?>>Farmer Hydroponic (DM)
+                </option>   
                 <option value="ketua" <?= ($data['role'] == 'ketua') ? 'selected' : ''; ?>>Ketua</option>
                 <option value="admin" <?= ($data['role'] == 'admin') ? 'selected' : ''; ?>>Admin</option>
             </select>

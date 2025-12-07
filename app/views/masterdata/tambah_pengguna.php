@@ -3,8 +3,6 @@
 <h2><?= htmlspecialchars($title) ?></h2>
 
 <div class="card mt-2">
-    <h3>Tambah Pengguna Baru</h3>
-
     <form action="<?= BASEURL; ?>/masterdata/simpanPengguna" method="post">
 
         <div class="form-group">
@@ -25,7 +23,7 @@
         <div class="form-group">
             <label>Role</label>
             <select class="input" name="peran">
-                <option value="petani">Petani (DM)</option>
+                <option value="farmer">Farmer Hydroponic (DM)</option>
                 <option value="ketua">Ketua</option>
                 <option value="admin">Admin</option>
             </select>

@@ -47,26 +47,23 @@ class LaporanController extends Controller
         // 2. Kalau TIDAK ada penilaian → hapus semua hasil lama
         if (empty($dataPenilaian)) {
             $hasilModel->hapusSemuaHasil();
+            $this->setFlash('error', 'Tidak ada data penilaian untuk dihitung ulang.');
 
             header('Location: ' . BASEURL . '/laporan/hasil');
             exit;
         }
 
         // 3. Kalau ADA penilaian:
-        //    Untuk saat ini, kita hanya reset dulu hasil lama,
-        //    supaya tidak menampilkan ranking yang sudah tidak relevan.
-        //    Nanti logika hitung ulang AHP/Borda bisa ditambahkan di sini.
+        //    Reset hasil lama dan jalankan perhitungan AHP-Borda
+
+        // ** (Pastikan Anda sudah mengaktifkan ini di ProsesController) **
+        // $this->model('ProsesController')->jalankan(); 
+
+        // Untuk saat ini, kita hanya reset dulu hasil lama.
         $hasilModel->hapusSemuaHasil();
 
-        // TODO: Implementasi hitung ulang AHP + Borda berdasarkan $dataPenilaian
-        // Contoh (nanti):
-        // $ahpModel   = new NilaiAhpDmModel();
-        // $bordaModel = new NilaiBordaModel();
-        // $ahpModel->prosesUlangAhp($dataPenilaian);
-        // $bordaModel->prosesUlangBorda($dataPenilaian);
-        // $hasilModel->generateHasilAkhir();
-
         // 4. Redirect ke halaman hasil
+        $this->setFlash('success', 'Hasil lama dihapus. Silakan jalankan proses hitung di menu "Proses Hitung".');
         header('Location: ' . BASEURL . '/laporan/hasil');
         exit;
     }
@@ -85,7 +82,11 @@ class LaporanController extends Controller
         $kriterias = [];
 
         foreach ($rows as $r) {
-            $data[$r['nama_pengguna']][$r['nama_alternatif']][$r['nama_kriteria']] = $r['nama_subkriteria'];
+            // PERBAIKAN: 
+            // 1. Ganti 'nama_pengguna' menjadi 'nama_lengkap' (sesuai Model)
+            // 2. Ganti 'nama_subkriteria' menjadi 'nilai_input' (karena sistem tanpa subkriteria)
+            $data[$r['nama_lengkap']][$r['nama_alternatif']][$r['nama_kriteria']] = $r['nilai_input'];
+
             $kriterias[$r['nama_kriteria']] = 1;
         }
 

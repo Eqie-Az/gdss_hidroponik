@@ -209,38 +209,128 @@ class MasterDataController extends Controller
     {
         $this->requireRole(['admin']);
 
+        // 1. Ambil data input
+        $kode = $_POST['kode_alternatif'];
+        $nama = $_POST['nama_alternatif'];
+
+        // 2. Siapkan Variabel Gambar
+        $file_gambar = $_FILES['gambar'] ?? null;
+        $nama_file_baru = null; // Default null jika tidak ada gambar
+
+        // 3. Cek apakah user mengupload gambar?
+        if ($file_gambar && $file_gambar['error'] == UPLOAD_ERR_OK) {
+
+            // Validasi Ekstensi
+            $allowed_ext = ['jpg', 'jpeg', 'png', 'gif'];
+            $file_info = pathinfo($file_gambar['name']);
+            $extension = strtolower($file_info['extension']);
+
+            if (in_array($extension, $allowed_ext)) {
+                // Buat Nama File Unik (Kode + Waktu) agar tidak bentrok
+                $nama_file_baru = $kode . '_' . time() . '.' . $extension;
+
+                // Tentukan Folder Tujuan (Pastikan path ini benar)
+                // __DIR__ ada di app/controllers, jadi naik 2 level ke root, lalu ke public
+                $target_dir = __DIR__ . '/../../public/assets/img/alternatif/';
+
+                // Buat folder jika belum ada
+                if (!is_dir($target_dir)) {
+                    mkdir($target_dir, 0777, true);
+                }
+
+                // Pindahkan file dari folder sementara ke folder tujuan
+                if (!move_uploaded_file($file_gambar['tmp_name'], $target_dir . $nama_file_baru)) {
+                    $this->setFlash('error', 'Gagal mengunggah gambar ke server.');
+                    header('Location: ' . BASEURL . '/MasterData/tambahAlternatif');
+                    exit;
+                }
+            } else {
+                $this->setFlash('error', 'Format gambar salah! Gunakan JPG atau PNG.');
+                header('Location: ' . BASEURL . '/MasterData/tambahAlternatif');
+                exit;
+            }
+        }
+
+        // 4. Simpan ke Database via Model
+        // Gunakan method 'create' atau 'tambahDataAlternatif' sesuai yang ada di Model Anda
         $data = [
-            'kode_alternatif' => $_POST['kode_alternatif'],
-            'nama_alternatif' => $_POST['nama_alternatif'],
-            'gambar' => $_POST['gambar'] ?? null
+            'kode_alternatif' => $kode,
+            'nama_alternatif' => $nama,
+            'gambar' => $nama_file_baru // Simpan nama filenya saja
         ];
 
-        $this->model('AlternatifModel')->tambahDataAlternatif($data);
+        // Pastikan nama method model sesuai (di file AlternatifModel.php Anda pakai 'tambahDataAlternatif')
+        if ($this->model('AlternatifModel')->tambahDataAlternatif($data) > 0) {
+            $this->setFlash('success', 'Alternatif berhasil ditambahkan!');
+        } else {
+            $this->setFlash('error', 'Gagal menyimpan data ke database.');
+        }
+
         header('Location: ' . BASEURL . '/masterdata/alternatif');
         exit;
     }
 
+    // Memastikan Controller memanggil View yang BARU (edit_alternatif)
     public function editAlternatif($id)
     {
         $this->requireRole(['admin']);
 
+        // Gunakan $this->model(...) agar konsisten
         $data['data'] = $this->model('AlternatifModel')->getAlternatifById($id);
         $data['title'] = 'Edit Alternatif';
-        $this->view('masterdata/edit', $data);
+
+        // PERBAIKAN: Arahkan ke 'masterdata/edit_alternatif', BUKAN 'masterdata/edit'
+        $this->view('masterdata/edit_alternatif', $data);
     }
 
+    // Logika Update dengan Upload Gambar
     public function updateAlternatif()
     {
         $this->requireRole(['admin']);
 
+        $id = $_POST['id_alternatif'];
+        $kode = $_POST['kode_alternatif'];
+        $nama = $_POST['nama_alternatif'];
+
+        // 1. Ambil data gambar lama dari database (sebagai default)
+        $dataLama = $this->model('AlternatifModel')->getAlternatifById($id);
+        $nama_file = $dataLama['gambar'];
+
+        // 2. Cek apakah user mengupload gambar baru?
+        $file_gambar = $_FILES['gambar'] ?? null;
+
+        if ($file_gambar && $file_gambar['error'] == UPLOAD_ERR_OK) {
+            $allowed_ext = ['jpg', 'jpeg', 'png', 'gif'];
+            $file_info = pathinfo($file_gambar['name']);
+            $extension = strtolower($file_info['extension']);
+
+            if (in_array($extension, $allowed_ext)) {
+                // Buat nama file baru yang unik
+                $nama_file_baru = $kode . '_' . time() . '.' . $extension;
+                $target_dir = __DIR__ . '/../../public/assets/img/alternatif/';
+
+                // Upload file baru
+                if (move_uploaded_file($file_gambar['tmp_name'], $target_dir . $nama_file_baru)) {
+                    // Hapus file lama jika ada (opsional, untuk hemat storage)
+                    if ($nama_file && file_exists($target_dir . $nama_file)) {
+                        unlink($target_dir . $nama_file);
+                    }
+                    // Update variabel nama file dengan yang baru
+                    $nama_file = $nama_file_baru;
+                }
+            }
+        }
+
+        // 3. Simpan ke database
         $data = [
-            'id_alternatif' => $_POST['id_alternatif'],
-            'kode_alternatif' => $_POST['kode_alternatif'],
-            'nama_alternatif' => $_POST['nama_alternatif'],
-            'gambar' => $_POST['gambar']
+            'id_alternatif' => $id,
+            'kode_alternatif' => $kode,
+            'nama_alternatif' => $nama,
+            'gambar' => $nama_file // Akan berisi gambar baru atau tetap gambar lama
         ];
 
         $this->model('AlternatifModel')->ubahDataAlternatif($data);
+        $this->setFlash('success', 'Data alternatif berhasil diperbarui!');
         header('Location: ' . BASEURL . '/masterdata/alternatif');
         exit;
     }

@@ -32,8 +32,8 @@
                                     $roleClass = 'badge-admin';
                                 elseif ($row['role'] === 'ketua')
                                     $roleClass = 'badge-ketua';
-                                elseif ($row['role'] === 'petani')
-                                    $roleClass = 'badge-petani';
+                                elseif ($row['role'] === 'farmer')
+                                    $roleClass = 'badge-farmer';
                                 ?>
                                 <span class="badge <?= $roleClass; ?>">
                                     <?= htmlspecialchars(ucfirst($row['role'])); ?>

@@ -403,7 +403,7 @@ a {
 }
 .badge-admin { background-color: var(--danger); }
 .badge-ketua { background-color: #2ecc71; }
-.badge-petani { background-color: #f1c40f; }
+.badge-farmer { background-color: #f1c40f; }
 .badge-default { background-color: var(--text-light); }
 
 /* Button Variants */

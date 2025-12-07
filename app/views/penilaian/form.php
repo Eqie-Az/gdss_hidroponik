@@ -2,7 +2,7 @@
 
 <div class="card">
     <div class="header-actions">
-        <h2>Form Penilaian Tanaman Hidroponik</h2>
+        <h2>Form Penilaian Tanaman Hidroponik (Input Manual)</h2>
     </div>
 
     <form action="<?= BASEURL; ?>/penilaian/simpan" method="post">
@@ -14,8 +14,7 @@
                         <th>Alternatif</th>
                         <?php foreach ($kriteria as $k): ?>
                             <th>
-                                <?= htmlspecialchars($k['nama_kriteria']) ?> <br>
-                                <small>(Bobot: <?= number_format($k['bobot_kriteria'], 4) ?>)</small>
+                                <?= htmlspecialchars($k['nama_kriteria']) ?>
                             </th>
                         <?php endforeach; ?>
                     </tr>
