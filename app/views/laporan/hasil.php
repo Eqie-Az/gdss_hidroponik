@@ -1,15 +1,20 @@
 <?php
 // app/views/laporan/hasil.php
 
-// Judul halaman (fallback jika tidak di-set dari controller)
 $title = $title ?? 'Hasil Konsensus Akhir';
 ?>
 
-<h2><?= htmlspecialchars($title) ?></h2>
-
 <div class="card">
+    <div class="header-actions">
+        <h2><?= htmlspecialchars($title) ?></h2>
+
+        <?php if (!empty($tombol_hitung)): ?>
+            <?= $tombol_hitung; ?>
+        <?php endif; ?>
+    </div>
+
     <div class="table-responsive">
-        <table class="table">
+        <table class="table" cellspacing="0">
             <thead>
                 <tr>
                     <th>Peringkat</th>
@@ -23,9 +28,8 @@ $title = $title ?? 'Hasil Konsensus Akhir';
                     <?php foreach ($hasil as $row): ?>
                         <tr>
                             <td>
-                                <div
-                                    style="background:var(--primary); color:#fff; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold;">
-                                    <?= htmlspecialchars($row['peringkat_akhir']) ?>
+                                <div class="rank-circle">
+                                    <?= htmlspecialchars($row['ranking_final']) ?>
                                 </div>
                             </td>
                             <td>
@@ -35,14 +39,14 @@ $title = $title ?? 'Hasil Konsensus Akhir';
                                         class="img-alternatif" alt="<?= htmlspecialchars($row['nama_alternatif']) ?>">
                                 <?php endif; ?>
                             </td>
-                            <td><?= htmlspecialchars($row['total_poin_borda']) ?></td>
-                            <td><strong><?= number_format($row['skor_akhir'], 2) ?></strong></td>
+                            <td><?= number_format($row['total_poin'], 4) ?></td>
+                            <td><strong><?= number_format($row['total_poin'], 4) ?></strong></td>
                         </tr>
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
                         <td colspan="4" class="text-center">
-                            Belum ada data hasil konsensus akhir.
+                            Belum ada data hasil konsensus akhir. Silakan jalankan proses perhitungan.
                         </td>
                     </tr>
                 <?php endif; ?>

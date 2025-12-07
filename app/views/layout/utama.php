@@ -3,8 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= isset($title) ? htmlspecialchars($title) : 'GDSS Hidroponik' ?></title>
-    <link rel="stylesheet" href="/assets/css/style.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="<?= BASEURL; ?>/assets/css/style.css?v=<?= time() ?>">
 </head>
 
 <body>
@@ -16,22 +17,16 @@
     $isLoggedIn = !empty($_SESSION['user_id']);
     $role = $_SESSION['user_role'] ?? '';
 
+    // Logika deteksi URL aktif
     $current_uri = $_SERVER['REQUEST_URI'];
-
-    // --- PERBAIKAN LOGIKA DETEKSI HALAMAN LOGIN ---
-    // Cek apakah URL mengandung kata kunci login/register/auth
-    // ATAU apakah URL sangat pendek (hanya '/' atau '/public/') yang berarti halaman utama (login)
-    $isAuthPage = (stripos($current_uri, 'login') !== false) ||
+    $isAuthPage = (stripos($current_uri, 'auth') !== false) ||
+        (stripos($current_uri, 'login') !== false) ||
         (stripos($current_uri, 'register') !== false) ||
-        (stripos($current_uri, 'Auth') !== false) ||
-        ($current_uri === '/' || $current_uri === '/public/');
+        ($current_uri == str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) . '/') ||
+        ($current_uri === '/');
 
-    // Logika Menu Aktif
     $isActive = function ($keyword) use ($current_uri) {
-        if ($keyword == '/Dashboard') {
-            return (strpos($current_uri, '/Dashboard') !== false) ? 'active' : '';
-        }
-        return (strpos($current_uri, $keyword) !== false) ? 'active' : '';
+        return (stripos($current_uri, $keyword) !== false) ? 'active' : '';
     };
     ?>
 
@@ -41,23 +36,30 @@
                 <span class="navbar-title">GDSS Hidroponik (<?= ucfirst($role) ?>)</span>
 
                 <nav>
-                    <a href="/Dashboard/index" class="<?= $isActive('/Dashboard') ?>">Dashboard</a>
-                    <a href="/Penilaian/form" class="<?= $isActive('/Penilaian') ?>">Input Penilaian</a>
+                    <a href="<?= BASEURL; ?>/dashboard" class="<?= $isActive('/dashboard') ?>">Dashboard</a>
 
                     <?php if ($role === 'admin'): ?>
-                        <a href="/MasterData/alternatif" class="<?= $isActive('/MasterData/alternatif') ?>">Alternatif</a>
-                        <a href="/MasterData/kriteria" class="<?= $isActive('/MasterData/kriteria') ?>">Kriteria</a>
-                        <a href="/MasterData/pengguna" class="<?= $isActive('/MasterData/pengguna') ?>">Pengguna</a>
+                        <a href="<?= BASEURL; ?>/masterdata/pengguna" class="<?= $isActive('/masterdata/pengguna') ?>">User</a>
+                        <a href="<?= BASEURL; ?>/masterdata/kriteria"
+                            class="<?= $isActive('/masterdata/kriteria') ?>">Kriteria</a>
+                        <a href="<?= BASEURL; ?>/masterdata/alternatif"
+                            class="<?= $isActive('/masterdata/alternatif') ?>">Alternatif</a>
                     <?php endif; ?>
+
+                    <a href="<?= BASEURL; ?>/penilaian/form" class="<?= $isActive('/penilaian') ?>">Input Nilai</a>
 
                     <?php if ($role === 'admin' || $role === 'ketua'): ?>
-                        <a href="/Proses/index" class="<?= $isActive('/Proses') ?>">Proses Hitung</a>
-                        <a href="/Laporan/hasil" class="<?= $isActive('/Laporan/hasil') ?>">Hasil Akhir</a>
-                        <a href="/Laporan/detail" class="<?= $isActive('/Laporan/detail') ?>">Detail</a>
-                        <a href="/Laporan/perhitungan" class="<?= $isActive('/Laporan/perhitungan') ?>">Perhitungan</a>
+
+                        <a href="<?= BASEURL; ?>/proses" class="<?= $isActive('/proses') ?>">Proses Hitung</a>
+
+                        <a href="<?= BASEURL; ?>/laporan/hasil" class="<?= $isActive('/laporan/hasil') ?>">Hasil Akhir</a>
+                        <a href="<?= BASEURL; ?>/laporan/detail" class="<?= $isActive('/laporan/detail') ?>">Detail</a>
+                        <a href="<?= BASEURL; ?>/laporan/perhitungan"
+                            class="<?= $isActive('/laporan/perhitungan') ?>">Perhitungan</a>
+
                     <?php endif; ?>
 
-                    <a href="/Auth/logout" onclick="return confirm('Yakin ingin keluar?');"
+                    <a href="<?= BASEURL; ?>/auth/logout" onclick="return confirm('Yakin ingin keluar?');"
                         style="color: #ffcdd2;">Logout</a>
                 </nav>
             </div>
@@ -65,10 +67,29 @@
     <?php endif; ?>
 
     <main class="container">
+        <?php
+        // Cek apakah ada flash message dan pastikan itu adalah array
+        if (isset($_SESSION['flash']) && is_array($_SESSION['flash'])):
+            ?>
+            <?php foreach ($_SESSION['flash'] as $key => $message): ?>
+                <?php
+                // Tentukan kelas alert berdasarkan key (success, error, info)
+                $alertClass = 'alert-info';
+                if ($key === 'success')
+                    $alertClass = 'alert-success';
+                if ($key === 'error')
+                    $alertClass = 'alert-error';
+                ?>
+                <div class="<?= $alertClass; ?>">
+                    <?= htmlspecialchars($message); ?>
+                </div>
+            <?php endforeach; ?>
+            <?php unset($_SESSION['flash']); // Hapus array flash setelah ditampilkan ?>
+        <?php endif; ?>
         <?= $content ?>
     </main>
 
-    <script src="/assets/js/script.js"></script>
+    <script src="<?= BASEURL; ?>/assets/js/script.js"></script>
 </body>
 
 </html>

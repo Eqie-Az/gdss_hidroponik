@@ -3,31 +3,31 @@
 <div class="card card-center">
     <h2>Registrasi Pengguna</h2>
 
-    <form action="/Auth/doRegister" method="post">
+    <?php if (isset($error)): ?>
+        <p class="alert alert-error"><?= htmlspecialchars($error) ?></p>
+    <?php endif; ?>
+
+    <form action="<?= BASEURL; ?>/auth/doRegister" method="post">
         <div class="form-group">
-            <label>Nama</label>
-            <input class="input" type="text" name="nama">
+            <label>Nama Lengkap</label>
+            <input class="input" type="text" name="nama" required>
         </div>
 
         <div class="form-group">
             <label>Username</label>
-            <input class="input" type="text" name="username">
+            <input class="input" type="text" name="username" required>
         </div>
 
         <div class="form-group">
             <label>Password</label>
-            <input class="input" type="password" name="password">
+            <input class="input" type="password" name="password" required>
         </div>
 
-        <div class="form-group">
-            <label>Peran</label>
-            <select class="input" name="peran">
-                <option value="dm">Decision Maker</option>
-                <option value="ketua">Ketua</option>
-                <option value="admin">Admin</option>
-            </select>
-        </div>
+        <button class="btn btn-primary" type="submit">Daftar Sekarang</button>
 
-        <button class="btn btn-primary" type="submit">Simpan</button>
+        <p style="margin-top: 15px; text-align: center; font-size: 0.9em;">
+            Sudah punya akun? <a href="<?= BASEURL; ?>/auth"
+                style="text-decoration: underline; font-weight: bold;">Login disini</a>
+        </p>
     </form>
 </div>

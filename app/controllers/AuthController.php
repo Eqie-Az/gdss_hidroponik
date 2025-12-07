@@ -1,18 +1,17 @@
 <?php
-// app/controllers/AuthController.php
-
-require_once __DIR__ . '/../models/PenggunaModel.php';
 
 class AuthController extends Controller
 {
     public function index()
     {
-        // Jika sudah login, redirect ke dashboard
+        $this->startSession();
+
         if (isset($_SESSION['user_id'])) {
-            header('Location: /Dashboard/index');
+            header('Location: ' . BASEURL . '/dashboard');
             exit;
         }
-        $this->view('auth/login');
+        $data['title'] = 'Login';
+        $this->view('auth/login', $data);
     }
 
     public function login()
@@ -22,24 +21,30 @@ class AuthController extends Controller
         $username = $_POST['username'] ?? '';
         $password = $_POST['password'] ?? '';
 
-        $model = new PenggunaModel();
+        // 1. VALIDASI INPUT KOSONG
+        if (empty($username) || empty($password)) {
+            $data['title'] = 'Login';
+            $data['error'] = 'Username dan Password wajib diisi!';
+            $this->view('auth/login', $data);
+            return; // Hentikan proses
+        }
+
+        $model = $this->model('PenggunaModel');
         $user = $model->findByLoginName($username);
 
-        // SEBELUMNYA:
-        // if ($user && password_verify($password, $user['kata_sandi_hash'])) {
-
-        // GANTI JADI CEK BIASA:
-        if ($user && $password === $user['kata_sandi_hash']) {
+        // Cek User & Password
+        if ($user && password_verify($password, $user['password'])) {
 
             $_SESSION['user_id'] = $user['id_pengguna'];
-            $_SESSION['user_name'] = $user['nama_pengguna'];
-            $_SESSION['user_role'] = $user['peran'];
+            $_SESSION['user_name'] = $user['nama_lengkap'];
+            $_SESSION['user_role'] = $user['role'];
 
-            $this->redirect('Dashboard/index');
+            header('Location: ' . BASEURL . '/dashboard');
+            exit;
         } else {
-            $title = 'Login';
-            $error = 'Username atau password salah';
-            $this->view('auth/login', compact('title', 'error'));
+            $data['title'] = 'Login';
+            $data['error'] = 'Username atau password salah';
+            $this->view('auth/login', $data);
         }
     }
 
@@ -47,25 +52,49 @@ class AuthController extends Controller
     {
         $this->startSession();
         session_destroy();
-        $this->redirect('Auth/index');
+        header('Location: ' . BASEURL . '/auth');
+        exit;
     }
 
     public function register()
     {
-        $title = 'Registrasi Pengguna';
-        $this->view('auth/register', compact('title'));
+        $data['title'] = 'Registrasi Pengguna';
+        $this->view('auth/register', $data);
     }
 
     public function doRegister()
     {
+        $this->startSession();
+
         $nama = $_POST['nama'] ?? '';
         $username = $_POST['username'] ?? '';
         $password = $_POST['password'] ?? '';
-        $peran = $_POST['peran'] ?? 'dm';
 
-        $model = new PenggunaModel();
-        $model->create($nama, $username, $password, $peran);
+        // 2. VALIDASI INPUT KOSONG (BACKEND)
+        if (empty($nama) || empty($username) || empty($password)) {
+            $data['title'] = 'Registrasi Pengguna';
+            $data['error'] = 'Semua kolom (Nama, Username, Password) wajib diisi!';
+            $this->view('auth/register', $data);
+            return; // Hentikan proses simpan
+        }
 
-        $this->redirect('Auth/index');
+        // Siapkan data
+        $data = [
+            'nama_lengkap' => $nama,
+            'username' => $username,
+            'password' => $password,
+            'role' => 'petani' // Default role
+        ];
+
+        // Simpan ke DB
+        if ($this->model('PenggunaModel')->tambahDataPengguna($data) > 0) {
+            header('Location: ' . BASEURL . '/auth');
+            exit;
+        } else {
+            // Jika gagal simpan (misal username kembar)
+            $data['title'] = 'Registrasi Pengguna';
+            $data['error'] = 'Gagal mendaftar. Username mungkin sudah digunakan.';
+            $this->view('auth/register', $data);
+        }
     }
 }

@@ -1,56 +1,83 @@
 <?php
-// app/models/NilaiAhpDmModel.php
 
 class NilaiAhpDmModel extends Model
 {
-    private $table = 'nilai_ahp_dm';
+    // PERBAIKAN: Nama tabel disesuaikan dengan database baru
+    private $table = 'nilai_ahp';
 
-    public function simpanNilai($id_pengguna, $id_alternatif, $nilai_ahp)
+    /**
+     * Menyimpan nilai hasil perhitungan AHP per user
+     */
+    public function simpanNilai($id_pengguna, $id_alternatif, $nilai_akhir)
     {
-        $sql = "INSERT INTO {$this->table}
-                    (id_pengguna, id_alternatif, nilai_ahp)
-                VALUES
-                    (:id_pengguna, :id_alternatif, :nilai_ahp)
-                ON DUPLICATE KEY UPDATE
-                    nilai_ahp = VALUES(nilai_ahp)";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            ':id_pengguna'   => $id_pengguna,
-            ':id_alternatif' => $id_alternatif,
-            ':nilai_ahp'     => $nilai_ahp,
-        ]);
+        // 1. Cek apakah sudah ada data (agar tidak duplikat)
+        $check = "SELECT id_nilai_ahp FROM " . $this->table . " 
+                  WHERE id_pengguna = :idp AND id_alternatif = :ida";
+        $stmtCheck = $this->db->prepare($check);
+        $stmtCheck->bindValue(':idp', $id_pengguna);
+        $stmtCheck->bindValue(':ida', $id_alternatif);
+        $stmtCheck->execute();
+
+        if ($stmtCheck->rowCount() > 0) {
+            // Update jika ada
+            $query = "UPDATE " . $this->table . " 
+                      SET nilai_akhir = :val 
+                      WHERE id_pengguna = :idp AND id_alternatif = :ida";
+        } else {
+            // Insert jika belum ada
+            $query = "INSERT INTO " . $this->table . " (id_pengguna, id_alternatif, nilai_akhir) 
+                      VALUES (:idp, :ida, :val)";
+        }
+
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':idp', $id_pengguna);
+        $stmt->bindValue(':ida', $id_alternatif);
+        $stmt->bindValue(':val', $nilai_akhir);
+        $stmt->execute();
     }
 
+    /**
+     * Mengambil semua nilai untuk perhitungan Borda
+     * Format return: [id_pengguna => [id_alternatif => nilai]]
+     */
     public function getSemuaNilaiTergrup()
     {
-        $sql = "SELECT id_pengguna, id_alternatif, nilai_ahp
-                FROM {$this->table}
-                ORDER BY id_pengguna, nilai_ahp DESC";
-        $rows = $this->db->query($sql)->fetchAll();
+        $query = "SELECT * FROM " . $this->table;
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        $result = $stmt->fetchAll();
 
         $data = [];
-        foreach ($rows as $row) {
-            $idp = $row['id_pengguna'];
-            $ida = $row['id_alternatif'];
-            $val = $row['nilai_ahp'];
-
-            if (!isset($data[$idp])) {
-                $data[$idp] = [];
-            }
-            $data[$idp][$ida] = $val;
+        foreach ($result as $row) {
+            $data[$row['id_pengguna']][$row['id_alternatif']] = $row['nilai_akhir'];
         }
+
         return $data;
     }
-    // ... method sebelumnya ...
 
-    // REVISI 3: Mengambil hasil AHP per DM untuk ditampilkan
+    /**
+     * Mengambil data untuk Laporan (Halaman Perhitungan)
+     * Join dengan tabel Pengguna dan Alternatif untuk menampilkan nama
+     */
     public function getLaporanAhp()
     {
-        $sql = "SELECT n.*, u.nama_pengguna, a.nama_alternatif 
-                FROM nilai_ahp_dm n
-                JOIN pengguna u ON u.id_pengguna = n.id_pengguna
-                JOIN alternatif a ON a.id_alternatif = n.id_alternatif
-                ORDER BY u.nama_pengguna, n.nilai_ahp DESC";
-        return $this->db->query($sql)->fetchAll();
+        // PERBAIKAN: Query disesuaikan dengan nama kolom baru (nama_lengkap)
+        $query = "SELECT n.*, u.nama_lengkap, a.nama_alternatif 
+                  FROM " . $this->table . " n
+                  JOIN pengguna u ON n.id_pengguna = u.id_pengguna
+                  JOIN alternatif a ON n.id_alternatif = a.id_alternatif
+                  ORDER BY u.nama_lengkap ASC, n.nilai_akhir DESC";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Menghapus semua data (Reset)
+     */
+    public function truncate()
+    {
+        $this->db->query("TRUNCATE TABLE " . $this->table);
     }
 }

@@ -1,60 +1,66 @@
 <?php
-// app/models/PenilaianModel.php
 
 class PenilaianModel extends Model
 {
     private $table = 'penilaian';
 
-    // REVISI: Parameter terakhir diubah dari id_subkriteria menjadi nilai (angka)
-    public function savePenilaian($id_pengguna, $id_alternatif, $id_kriteria, $nilai)
+    public function getKriteriaUntukForm()
     {
-        // Simpan nilai input manual ke kolom 'nilai'
-        // Kolom id_subkriteria kita set NULL karena inputnya manual
-        $sql = "INSERT INTO {$this->table}
-                    (id_pengguna, id_alternatif, id_kriteria, nilai, id_subkriteria)
-                VALUES
-                    (:id_pengguna, :id_alternatif, :id_kriteria, :nilai, NULL)
-                ON DUPLICATE KEY UPDATE
-                    nilai = VALUES(nilai),
-                    id_subkriteria = NULL";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            ':id_pengguna' => $id_pengguna,
-            ':id_alternatif' => $id_alternatif,
-            ':id_kriteria' => $id_kriteria,
-            ':nilai' => $nilai
-        ]);
+        // Menggunakan fetchAll() karena Model Anda pakai PDO murni
+        return $this->db->query("SELECT * FROM kriteria")->fetchAll();
     }
 
-    // REVISI: Mengambil data 'nilai' langsung, bukan bobot subkriteria
+    public function simpanPenilaian($id_pengguna, $id_alternatif, $data_nilai)
+    {
+        // 1. Hapus nilai lama jika ada (Reset) untuk user & alternatif tersebut
+        $sqlHapus = "DELETE FROM " . $this->table . " WHERE id_pengguna = :idp AND id_alternatif = :ida";
+        $stmt = $this->db->prepare($sqlHapus);
+        $stmt->bindValue(':idp', $id_pengguna);
+        $stmt->bindValue(':ida', $id_alternatif);
+        $stmt->execute();
+
+        // 2. Insert nilai baru
+        $sqlInsert = "INSERT INTO " . $this->table . " (id_pengguna, id_alternatif, id_kriteria, nilai_input) VALUES (:idp, :ida, :idk, :val)";
+        $stmtInsert = $this->db->prepare($sqlInsert);
+
+        foreach ($data_nilai as $id_kriteria => $nilai) {
+            $stmtInsert->bindValue(':idp', $id_pengguna);
+            $stmtInsert->bindValue(':ida', $id_alternatif);
+            $stmtInsert->bindValue(':idk', $id_kriteria);
+            $stmtInsert->bindValue(':val', $nilai);
+            $stmtInsert->execute();
+        }
+
+        return true;
+    }
+
     public function getDataUntukAhp()
     {
-        $sql = "SELECT
-                    p.id_pengguna,
-                    p.id_alternatif,
-                    k.id_kriteria,
-                    k.bobot_kriteria,
-                    p.nilai AS nilai_input
-                FROM penilaian p
-                JOIN kriteria k ON k.id_kriteria = p.id_kriteria
-                ORDER BY p.id_pengguna, p.id_alternatif, k.id_kriteria";
-        return $this->db->query($sql)->fetchAll();
+        // Query untuk perhitungan (Join Kriteria)
+        $query = "SELECT p.*, k.bobot_kriteria 
+                  FROM penilaian p
+                  JOIN kriteria k ON p.id_kriteria = k.id_kriteria";
+        return $this->db->query($query)->fetchAll();
     }
 
     public function getAllPenilaianLengkap()
     {
-        // Revisi tampilan data agar menampilkan nilai angka
-        $sql = "SELECT 
-                    p.id_pengguna, u.nama_pengguna, 
-                    p.id_alternatif, a.nama_alternatif,
-                    p.id_kriteria, k.nama_kriteria,
-                    p.nilai as nilai_input
-                FROM penilaian p
-                JOIN pengguna u ON u.id_pengguna = p.id_pengguna
-                JOIN alternatif a ON a.id_alternatif = p.id_alternatif
-                JOIN kriteria k ON k.id_kriteria = p.id_kriteria
-                ORDER BY u.nama_pengguna, a.id_alternatif, k.id_kriteria";
-        return $this->db->query($sql)->fetchAll();
+        // PERBAIKAN DI SINI:
+        // 1. Ganti 'u.nama_pengguna' menjadi 'u.nama_lengkap'
+        // 2. Gunakan JOIN kriteria (bukan sub_kriteria)
+
+        $query = "SELECT 
+                    p.id_penilaian,
+                    u.nama_lengkap, 
+                    a.nama_alternatif,
+                    k.nama_kriteria,
+                    p.nilai_input
+                  FROM penilaian p
+                  JOIN pengguna u ON p.id_pengguna = u.id_pengguna
+                  JOIN alternatif a ON p.id_alternatif = a.id_alternatif
+                  JOIN kriteria k ON p.id_kriteria = k.id_kriteria
+                  ORDER BY u.nama_lengkap ASC, a.nama_alternatif ASC, k.id_kriteria ASC";
+
+        return $this->db->query($query)->fetchAll();
     }
 }

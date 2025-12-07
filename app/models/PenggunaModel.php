@@ -1,77 +1,113 @@
 <?php
-// app/models/PenggunaModel.php
 
 class PenggunaModel extends Model
 {
     private $table = 'pengguna';
+    // HAPUS baris 'private $db;' karena sudah ada 'protected $db' di parent class (Model)
 
+    // HAPUS __construct() agar otomatis menggunakan koneksi dari parent
+
+    public function getAllPengguna()
+    {
+        // Gunakan prepare() milik PDO
+        $stmt = $this->db->prepare("SELECT * FROM " . $this->table);
+        $stmt->execute();
+        return $stmt->fetchAll(); // fetchAll untuk banyak data
+    }
+
+    public function getPenggunaById($id)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM " . $this->table . " WHERE id_pengguna = :id");
+        $stmt->bindValue(':id', $id);
+        $stmt->execute();
+        return $stmt->fetch(); // fetch untuk satu data
+    }
+
+    /**
+     * Method Khusus Login
+     */
     public function findByLoginName($username)
     {
-        $sql = "SELECT * FROM {$this->table} WHERE nama_pengguna_login = :u LIMIT 1";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([':u' => $username]);
+        // Menggunakan syntax PDO murni
+        $stmt = $this->db->prepare("SELECT * FROM " . $this->table . " WHERE username = :user");
+        $stmt->bindValue(':user', $username);
+        $stmt->execute();
         return $stmt->fetch();
     }
 
-    public function create($nama, $username, $password, $peran = 'dm')
+    /**
+     * Method Tambah Data / Register
+     */
+    public function tambahDataPengguna($data)
     {
-        // Catatan: Sebaiknya gunakan password_hash(), tapi untuk menjaga konsistensi dengan kode awal Anda yang plain text saat login,
-        // saya simpan apa adanya. Jika ingin aman, ganti logic login juga.
-        $sql = "INSERT INTO {$this->table} (nama_pengguna, nama_pengguna_login, kata_sandi_hash, peran) 
-                VALUES (:nama, :user, :pass, :peran)";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            ':nama' => $nama,
-            ':user' => $username,
-            ':pass' => $password,
-            ':peran' => $peran,
-        ]);
+        $query = "INSERT INTO " . $this->table . " 
+                    (nama_lengkap, username, password, role)
+                    VALUES
+                    (:nama, :user, :pass, :role)";
+
+        $stmt = $this->db->prepare($query);
+
+        $stmt->bindValue(':nama', $data['nama_lengkap']);
+        $stmt->bindValue(':user', $data['username']);
+
+        // Hash password sebelum simpan
+        $stmt->bindValue(':pass', password_hash($data['password'], PASSWORD_DEFAULT));
+        $stmt->bindValue(':role', $data['role']);
+
+        $stmt->execute();
+        return $stmt->rowCount(); // Mengembalikan jumlah baris yang terpengaruh
     }
 
-    public function all()
+    public function hapusDataPengguna($id)
     {
-        $sql = "SELECT * FROM {$this->table} ORDER BY id_pengguna ASC";
-        return $this->db->query($sql)->fetchAll();
+        $query = "DELETE FROM " . $this->table . " WHERE id_pengguna = :id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':id', $id);
+
+        $stmt->execute();
+        return $stmt->rowCount();
     }
 
-    public function findById($id)
+    public function ubahDataPengguna($data)
     {
-        $sql = "SELECT * FROM {$this->table} WHERE id_pengguna = :id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([':id' => $id]);
-        return $stmt->fetch();
-    }
-
-    public function update($id, $nama, $username, $peran, $password = null)
-    {
-        if (!empty($password)) {
-            $sql = "UPDATE {$this->table} 
-                    SET nama_pengguna = :nama, nama_pengguna_login = :user, kata_sandi_hash = :pass, peran = :peran 
-                    WHERE id_pengguna = :id";
-            $this->db->prepare($sql)->execute([
-                ':nama' => $nama,
-                ':user' => $username,
-                ':pass' => $password,
-                ':peran' => $peran,
-                ':id' => $id
-            ]);
+        if (!empty($data['password'])) {
+            $query = "UPDATE " . $this->table . " SET 
+                        nama_lengkap = :nama,
+                        username = :user,
+                        password = :pass,
+                        role = :role
+                      WHERE id_pengguna = :id";
         } else {
-            $sql = "UPDATE {$this->table} 
-                    SET nama_pengguna = :nama, nama_pengguna_login = :user, peran = :peran 
-                    WHERE id_pengguna = :id";
-            $this->db->prepare($sql)->execute([
-                ':nama' => $nama,
-                ':user' => $username,
-                ':peran' => $peran,
-                ':id' => $id
-            ]);
+            $query = "UPDATE " . $this->table . " SET 
+                        nama_lengkap = :nama,
+                        username = :user,
+                        role = :role
+                      WHERE id_pengguna = :id";
         }
+
+        $stmt = $this->db->prepare($query);
+
+        $stmt->bindValue(':nama', $data['nama_lengkap']);
+        $stmt->bindValue(':user', $data['username']);
+        $stmt->bindValue(':role', $data['role']);
+        $stmt->bindValue(':id', $data['id_pengguna']);
+
+        if (!empty($data['password'])) {
+            $stmt->bindValue(':pass', password_hash($data['password'], PASSWORD_DEFAULT));
+        }
+
+        $stmt->execute();
+        return $stmt->rowCount();
     }
 
-    public function delete($id)
+    public function cariDataPengguna()
     {
-        $sql = "DELETE FROM {$this->table} WHERE id_pengguna = :id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([':id' => $id]);
+        $keyword = $_POST['keyword'];
+        $query = "SELECT * FROM " . $this->table . " WHERE nama_lengkap LIKE :keyword OR username LIKE :keyword";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':keyword', "%$keyword%");
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
 }

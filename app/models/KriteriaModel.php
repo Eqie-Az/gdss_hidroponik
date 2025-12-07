@@ -1,59 +1,54 @@
 <?php
-// app/models/KriteriaModel.php
 
 class KriteriaModel extends Model
 {
     private $table = 'kriteria';
 
-    public function all()
+    public function getAllKriteria()
     {
-        $sql = "SELECT * FROM {$this->table} ORDER BY id_kriteria ASC";
-        return $this->db->query($sql)->fetchAll();
+        return $this->db->query("SELECT * FROM " . $this->table)->fetchAll();
     }
 
-    public function findById($id)
+    public function getKriteriaById($id)
     {
-        $sql = "SELECT * FROM {$this->table} WHERE id_kriteria = :id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([':id' => $id]);
+        $stmt = $this->db->prepare("SELECT * FROM " . $this->table . " WHERE id_kriteria = :id");
+        $stmt->bindValue(':id', $id);
+        $stmt->execute();
         return $stmt->fetch();
     }
 
-    public function create($kode, $nama, $deskripsi, $bobot)
+    public function tambahDataKriteria($data)
     {
-        $sql = "INSERT INTO {$this->table} (kode_kriteria, nama_kriteria, deskripsi_kriteria, bobot_kriteria) 
-                VALUES (:kode, :nama, :desk, :bobot)";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            ':kode' => $kode,
-            ':nama' => $nama,
-            ':desk' => $deskripsi,
-            ':bobot' => $bobot,
-        ]);
+        $query = "INSERT INTO " . $this->table . " (kode_kriteria, nama_kriteria, bobot_kriteria) VALUES (:kode, :nama, :bobot)";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':kode', $data['kode_kriteria']);
+        $stmt->bindValue(':nama', $data['nama_kriteria']);
+        $stmt->bindValue(':bobot', $data['bobot_kriteria']);
+        $stmt->execute();
+        return $stmt->rowCount();
     }
 
-    public function update($id, $kode, $nama, $deskripsi, $bobot)
+    public function ubahDataKriteria($data)
     {
-        $sql = "UPDATE {$this->table} 
-                SET kode_kriteria = :kode, 
-                    nama_kriteria = :nama, 
-                    deskripsi_kriteria = :desk, 
-                    bobot_kriteria = :bobot 
-                WHERE id_kriteria = :id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            ':kode' => $kode,
-            ':nama' => $nama,
-            ':desk' => $deskripsi,
-            ':bobot' => $bobot,
-            ':id' => $id
-        ]);
+        $query = "UPDATE " . $this->table . " SET 
+                    kode_kriteria = :kode,
+                    nama_kriteria = :nama,
+                    bobot_kriteria = :bobot
+                  WHERE id_kriteria = :id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':kode', $data['kode_kriteria']);
+        $stmt->bindValue(':nama', $data['nama_kriteria']);
+        $stmt->bindValue(':bobot', $data['bobot_kriteria']);
+        $stmt->bindValue(':id', $data['id_kriteria']);
+        $stmt->execute();
+        return $stmt->rowCount();
     }
 
-    public function delete($id)
+    public function hapusDataKriteria($id)
     {
-        $sql = "DELETE FROM {$this->table} WHERE id_kriteria = :id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([':id' => $id]);
+        $stmt = $this->db->prepare("DELETE FROM " . $this->table . " WHERE id_kriteria = :id");
+        $stmt->bindValue(':id', $id);
+        $stmt->execute();
+        return $stmt->rowCount();
     }
 }

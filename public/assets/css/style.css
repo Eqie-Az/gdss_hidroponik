@@ -20,6 +20,10 @@
     --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
     --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
     --radius: 8px;            /* Sudut melengkung */
+    
+    /* Tambahan Variabel untuk Badge */
+    --warning: #f39c12;
+    --info: #3498db;
 }
 
 /* =========================================
@@ -231,6 +235,7 @@ a {
 .table th, .table td {
     padding: 15px;
     text-align: left;
+    /* Hanya gunakan border bawah yang tipis agar tidak 'jelek' seperti border=1 */
     border-bottom: 1px solid var(--border);
 }
 
@@ -254,9 +259,9 @@ a {
 
 /* UPDATED: Memperbesar ukuran foto alternatif */
 .img-alternatif {
-    width: 120px;          /* Diperbesar dari 60px ke 120px */
-    height: 120px;         /* Diperbesar dari 60px ke 120px */
-    object-fit: cover;     /* Agar gambar tidak gepeng */
+    width: 120px;           /* Diperbesar dari 60px ke 120px */
+    height: 120px;          /* Diperbesar dari 60px ke 120px */
+    object-fit: cover;      /* Agar gambar tidak gepeng */
     border-radius: 6px;
     border: 2px solid #fff;
     box-shadow: var(--shadow-sm);
@@ -374,4 +379,77 @@ a {
     font-size: 14px;
     margin-bottom: 20px;
     box-shadow: var(--shadow-sm);
+}
+
+/* =========================================
+   11. TAMBAHAN (SUPAYA TIDAK ERROR DI VIEW PHP)
+   ========================================= */
+.header-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* Badge Role */
+.badge {
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    font-weight: bold;
+    display: inline-block;
+    text-transform: capitalize;
+}
+.badge-admin { background-color: var(--danger); }
+.badge-ketua { background-color: #2ecc71; }
+.badge-petani { background-color: #f1c40f; }
+.badge-default { background-color: var(--text-light); }
+
+/* Button Variants */
+.btn-warning {
+    background-color: var(--warning);
+    color: white;
+}
+.btn-warning:hover { background-color: #e67e22; }
+
+.btn-danger-action {
+    background-color: #c0392b;
+    color: white;
+}
+.btn-danger-action:hover { background-color: #a93226; }
+
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 13px;
+    margin-right: 5px;
+}
+
+/* Utilities Text */
+.text-muted { color: #555; font-size: 0.9em; }
+.ml-2 { margin-left: 10px; }
+
+/* Alert Info */
+.alert-info {
+    background: #e3f2fd;
+    color: #0d47a1;
+    border-left: 5px solid #2196F3;
+    padding: 12px 15px;
+    border-radius: var(--radius);
+    margin-bottom: 20px;
+}
+
+.rank-circle {
+    background: var(--primary); 
+    color: #fff; 
+    width: 30px; 
+    height: 30px; 
+    border-radius: 50%; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-weight: 700;
+    font-size: 1.1em;
+    /* Membuat posisi di tengah sel tabel */
+    margin: 0 auto; 
 }

@@ -1,17 +1,16 @@
 <?php $title = $title ?? 'Master Alternatif'; ?>
 
-<h2>Master Alternatif</h2>
-
 <?php if ($msg = $this->getFlash('success')): ?>
-    <div class="alert-success"><?= $msg ?></div>
+    <div class="alert-success"><?= htmlspecialchars($msg) ?></div>
 <?php endif; ?>
 
-<a href="<?= BASEURL ?>/MasterData/tambahAlternatif" class="btn btn-primary mb-3">
-    Tambah Alternatif
-</a>
-
 <div class="card">
-    <h3>Daftar Alternatif</h3>
+
+    <div class="header-actions">
+        <h2>Master Alternatif</h2>
+        <a href="<?= BASEURL ?>/MasterData/tambahAlternatif" class="btn btn-primary btn-sm">+ Tambah Alternatif</a>
+    </div>
+
     <div class="table-responsive">
         <table class="table">
             <thead>
@@ -33,21 +32,17 @@
                             <?php if (!empty($a['gambar'])): ?>
                                 <img src="<?= BASEURL ?>/assets/img/alternatif/<?= htmlspecialchars($a['gambar']) ?>"
                                     class="img-alternatif">
-                                <small><?= htmlspecialchars($a['gambar']) ?></small>
                             <?php else: ?>
                                 -
                             <?php endif; ?>
                         </td>
                         <td>
-                            <!-- TOMBOL EDIT -->
-                            <a href="<?= BASEURL ?>/MasterData/editAlternatif/<?= $a['id_alternatif'] ?>" class="btn"
-                                style="background: #f39c12; color: #fff; padding: 5px 10px; font-size: 12px; margin-right: 5px;">
+                            <a href="<?= BASEURL ?>/MasterData/editAlternatif/<?= $a['id_alternatif'] ?>"
+                                class="btn btn-warning btn-sm gap-5">
                                 Edit
                             </a>
-                            <!-- TOMBOL HAPUS -->
-                            <a href="<?= BASEURL ?>/MasterData/hapusAlternatif/<?= $a['id_alternatif'] ?>" class="btn"
-                                style="background: #e74c3c; color: #fff; padding: 5px 10px; font-size: 12px;"
-                                onclick="return confirm('Hapus alternatif ini?')">
+                            <a href="<?= BASEURL ?>/MasterData/hapusAlternatif/<?= $a['id_alternatif'] ?>"
+                                class="btn btn-danger-action btn-sm" onclick="return confirm('Hapus alternatif ini?')">
                                 Hapus
                             </a>
                         </td>

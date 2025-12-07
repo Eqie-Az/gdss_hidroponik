@@ -1,12 +1,25 @@
 <?php
 class Controller
 {
+    /**
+     * Method untuk memanggil model
+     * Contoh penggunaan: $this->model('PenggunaModel');
+     */
+    public function model($model)
+    {
+        require_once __DIR__ . '/../models/' . $model . '.php';
+        return new $model;
+    }
+
     protected function view($view, $data = [])
     {
         extract($data);
         ob_start();
+        // Memuat view konten utama
         require __DIR__ . '/../views/' . $view . '.php';
         $content = ob_get_clean();
+
+        // Memuat layout utama (header/footer/sidebar) yang akan membungkus $content
         require __DIR__ . '/../views/layout/utama.php';
     }
 
@@ -35,10 +48,16 @@ class Controller
         $this->requireLogin();
         // Jika user tidak punya salah satu role yang diizinkan, tolak.
         if (!in_array($_SESSION['user_role'], $allowedRoles)) {
-            echo "<h1>Akses Ditolak (403)</h1><p>Anda tidak memiliki izin mengakses halaman ini.</p><a href='" . BASEURL . "/Dashboard'>Kembali</a>";
+            // Tampilan sederhana untuk akses ditolak
+            echo "<div style='text-align:center; margin-top:50px;'>";
+            echo "<h1>Akses Ditolak (403)</h1>";
+            echo "<p>Anda tidak memiliki izin mengakses halaman ini.</p>";
+            echo "<a href='" . BASEURL . "/Dashboard'>Kembali ke Dashboard</a>";
+            echo "</div>";
             exit;
         }
     }
+
     protected function setFlash($key, $message)
     {
         $this->startSession();

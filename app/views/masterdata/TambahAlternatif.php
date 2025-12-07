@@ -7,7 +7,7 @@ $title = $title ?? 'Tambah Alternatif';
 <div class="card mt-2">
     <h3>Tambah Alternatif</h3>
 
-    <form action="<?= BASEURL ?>/MasterData/simpanAlternatif" method="post">
+    <form action="<?= BASEURL ?>/MasterData/simpanAlternatif" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="kode_alternatif">Kode Alternatif</label>
             <input type="text" id="kode_alternatif" name="kode_alternatif" class="input" placeholder="Misal: A1"
@@ -21,11 +21,12 @@ $title = $title ?? 'Tambah Alternatif';
         </div>
 
         <div class="form-group">
-            <label for="gambar">Nama File Gambar (opsional)</label>
-            <input type="text" id="gambar" name="gambar" class="input" placeholder="misal: bayam.jpg">
+            <label for="gambar">Unggah Gambar Alternatif (JPG/PNG)</label>
+            <input type="file" id="gambar" name="gambar" class="input">
+            <small class="text-muted">*Maksimal ukuran file: 2MB</small>
         </div>
 
         <button type="submit" class="btn btn-primary">Simpan</button>
-        <a href="<?= BASEURL ?>/MasterData/alternatif" class="btn btn-secondary">Batal</a>
+        <a href="<?= BASEURL ?>/MasterData/alternatif" class="btn btn-secondary ml-2">Batal</a>
     </form>
 </div>

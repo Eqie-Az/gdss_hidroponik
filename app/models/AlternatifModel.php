@@ -1,56 +1,54 @@
 <?php
-// app/models/AlternatifModel.php
 
 class AlternatifModel extends Model
 {
     private $table = 'alternatif';
 
-    public function all()
+    public function getAllAlternatif()
     {
-        $sql = "SELECT * FROM {$this->table} ORDER BY id_alternatif ASC";
-        return $this->db->query($sql)->fetchAll();
+        return $this->db->query("SELECT * FROM " . $this->table)->fetchAll();
     }
 
-    public function findById($id_alternatif)
+    public function getAlternatifById($id)
     {
-        $sql = "SELECT * FROM {$this->table} WHERE id_alternatif = :id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([':id' => $id_alternatif]);
+        $stmt = $this->db->prepare("SELECT * FROM " . $this->table . " WHERE id_alternatif = :id");
+        $stmt->bindValue(':id', $id);
+        $stmt->execute();
         return $stmt->fetch();
     }
 
-    public function create($kode, $nama, $gambar = null)
+    public function tambahDataAlternatif($data)
     {
-        $sql = "INSERT INTO {$this->table} (kode_alternatif, nama_alternatif, gambar) 
-                VALUES (:kode, :nama, :gambar)";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            ':kode' => $kode,
-            ':nama' => $nama,
-            ':gambar' => $gambar,
-        ]);
+        $query = "INSERT INTO " . $this->table . " (kode_alternatif, nama_alternatif, gambar) VALUES (:kode, :nama, :gambar)";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':kode', $data['kode_alternatif']);
+        $stmt->bindValue(':nama', $data['nama_alternatif']);
+        $stmt->bindValue(':gambar', $data['gambar']);
+        $stmt->execute();
+        return $stmt->rowCount();
     }
 
-    public function update($id, $kode, $nama, $gambar)
+    public function ubahDataAlternatif($data)
     {
-        $sql = "UPDATE {$this->table} 
-                SET kode_alternatif = :kode, 
-                    nama_alternatif = :nama, 
-                    gambar = :gambar 
-                WHERE id_alternatif = :id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            ':kode' => $kode,
-            ':nama' => $nama,
-            ':gambar' => $gambar,
-            ':id' => $id
-        ]);
+        $query = "UPDATE " . $this->table . " SET 
+                    kode_alternatif = :kode,
+                    nama_alternatif = :nama,
+                    gambar = :gambar
+                  WHERE id_alternatif = :id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':kode', $data['kode_alternatif']);
+        $stmt->bindValue(':nama', $data['nama_alternatif']);
+        $stmt->bindValue(':gambar', $data['gambar']);
+        $stmt->bindValue(':id', $data['id_alternatif']);
+        $stmt->execute();
+        return $stmt->rowCount();
     }
 
-    public function delete($id)
+    public function hapusDataAlternatif($id)
     {
-        $sql = "DELETE FROM {$this->table} WHERE id_alternatif = :id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([':id' => $id]);
+        $stmt = $this->db->prepare("DELETE FROM " . $this->table . " WHERE id_alternatif = :id");
+        $stmt->bindValue(':id', $id);
+        $stmt->execute();
+        return $stmt->rowCount();
     }
 }

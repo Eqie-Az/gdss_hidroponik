@@ -1,49 +1,58 @@
 <?php
-// app/controllers/PenilaianController.php
-
-require_once __DIR__ . '/../models/AlternatifModel.php';
-require_once __DIR__ . '/../models/KriteriaModel.php';
-// require_once __DIR__ . '/../models/SubkriteriaModel.php'; // Tidak lagi dibutuhkan untuk form input
-require_once __DIR__ . '/../models/PenilaianModel.php';
 
 class PenilaianController extends Controller
 {
+    /**
+     * Menampilkan Form Input Nilai
+     */
     public function form()
     {
-        $this->requireRole(['dm', 'ketua', 'admin']);
-        $this->startSession();
+        // 1. IZINKAN ROLE PETANI
+        // Agar farmer2 & farmer3 bisa masuk
+        $this->requireRole(['admin', 'ketua', 'petani']);
 
-        $altModel = new AlternatifModel();
-        $kritModel = new KriteriaModel();
+        $data['judul'] = 'Input Penilaian';
 
-        $alternatif = $altModel->all();
-        $kriteria = $kritModel->all();
+        // Ambil data untuk membangun form matriks (Baris: Alternatif, Kolom: Kriteria)
+        $data['alternatif'] = $this->model('AlternatifModel')->getAllAlternatif();
+        $data['kriteria'] = $this->model('KriteriaModel')->getAllKriteria();
 
-        // Tidak perlu memuat subkriteria karena input manual
-
-        $title = 'Form Penilaian';
-        $this->view('penilaian/form', compact('title', 'alternatif', 'kriteria'));
+        $this->view('penilaian/form', $data);
     }
 
+    /**
+     * Memproses Penyimpanan Nilai dari Form
+     */
     public function simpan()
     {
-        $this->requireRole(['dm', 'ketua', 'admin']);
+        $this->requireRole(['admin', 'ketua', 'petani']);
         $this->startSession();
+
         $id_pengguna = $_SESSION['user_id'];
+        $input_nilai = $_POST['nilai'] ?? []; // Struktur: [id_alternatif][id_kriteria] = nilai
 
-        $nilai = $_POST['nilai'] ?? [];
-        $model = new PenilaianModel();
-
-        foreach ($nilai as $id_alternatif => $kArr) {
-            foreach ($kArr as $id_kriteria => $nilai_input) {
-                // Cek jika nilai tidak kosong (bisa 0, jadi pakai is_numeric)
-                if (is_numeric($nilai_input)) {
-                    $model->savePenilaian($id_pengguna, $id_alternatif, $id_kriteria, $nilai_input);
-                }
-            }
+        if (empty($input_nilai)) {
+            header('Location: ' . BASEURL . '/penilaian/form');
+            exit;
         }
 
-        $title = 'Penilaian Tersimpan';
-        $this->view('penilaian/sukses', compact('title'));
+        $penilaianModel = $this->model('PenilaianModel');
+
+        // Loop setiap Alternatif yang dikirim form
+        foreach ($input_nilai as $id_alternatif => $data_kriteria) {
+            // Simpan per alternatif (Model akan menghapus data lama dulu/reset)
+            $penilaianModel->simpanPenilaian($id_pengguna, $id_alternatif, $data_kriteria);
+        }
+
+        // Redirect ke halaman sukses
+        header('Location: ' . BASEURL . '/penilaian/sukses');
+        exit;
+    }
+
+    public function sukses()
+    {
+        $this->requireRole(['admin', 'ketua', 'petani']);
+        $data['judul'] = 'Berhasil Disimpan';
+        $this->view('penilaian/sukses', $data);
     }
 }
