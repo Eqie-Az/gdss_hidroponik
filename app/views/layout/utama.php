@@ -45,6 +45,8 @@
                             class="<?= $isActive('/masterdata/kriteria') ?>">Kriteria</a>
                         <a href="<?= BASEURL; ?>/masterdata/alternatif"
                             class="<?= $isActive('/masterdata/alternatif') ?>">Alternatif (Master)</a>
+
+                        <a href="<?= BASEURL; ?>/laporan/detail" class="<?= $isActive('/laporan/detail') ?>">Laporan Lengkap</a>
                     <?php endif; ?>
 
                     <?php if ($role === 'farmer'): ?>
@@ -64,14 +66,12 @@
                         <a href="<?= BASEURL; ?>/penilaian/detail" class="<?= $isActive('/penilaian/detail') ?>">Detail
                             Penilaian Saya</a>
 
+                        <a href="<?= BASEURL; ?>/laporan/detail" class="<?= $isActive('/laporan/detail') ?>">Laporan Lengkap</a>
+
                         <a href="<?= BASEURL; ?>/proses" class="<?= $isActive('/proses') ?>">Proses Hitung</a>
                     <?php endif; ?>
 
                     <a href="<?= BASEURL; ?>/laporan/hasil" class="<?= $isActive('/laporan/hasil') ?>">Hasil Ranking</a>
-
-                    <?php if ($role === 'admin' || $role === 'ketua'): ?>
-                        <a href="<?= BASEURL; ?>/laporan/detail" class="<?= $isActive('/laporan/detail') ?>">Laporan Lengkap</a>
-                    <?php endif; ?>
 
                     <a href="<?= BASEURL; ?>/auth/logout" onclick="return confirm('Yakin ingin keluar?');"
                         style="color: #ffcdd2;">Logout</a>

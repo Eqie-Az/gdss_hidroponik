@@ -1,91 +1,83 @@
-<?php $title = $title ?? 'Perbandingan Alternatif'; ?>
+<?php $title = $title ?? 'Input Nilai'; ?>
 
 <div class="card">
     <div class="header-actions">
-        <h2>Perbandingan Alternatif</h2>
-        <span class="badge badge-ketua" style="font-size:1em;">
-            Kriteria: <?= htmlspecialchars($kriteria['nama_kriteria']) ?>
-        </span>
+        <h2>Penilaian Tanaman: <span
+                class="text-success"><?= htmlspecialchars($targetAlternatif['nama_alternatif']) ?></span></h2>
     </div>
 
+    <?php if (!empty($targetAlternatif['gambar'])): ?>
+        <div style="margin-bottom: 20px; text-align: center;">
+            <img src="<?= BASEURL ?>/assets/img/alternatif/<?= htmlspecialchars($targetAlternatif['gambar']) ?>"
+                style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px; border: 4px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+            <p class="text-muted" style="margin-top: 10px;">Kode:
+                <?= htmlspecialchars($targetAlternatif['kode_alternatif']) ?></p>
+        </div>
+    <?php endif; ?>
+
     <div class="alert-info alert-inline" style="margin-bottom: 20px;">
-        <strong>Panduan:</strong> Bandingkan mana yang lebih unggul untuk kriteria ini. <br>
-        (Angka Bulat = Kiri lebih unggul, Desimal = Kanan lebih unggul).
+        <strong>Instruksi:</strong><br>
+        Silakan beri nilai (Rating) untuk tanaman
+        <strong><?= htmlspecialchars($targetAlternatif['nama_alternatif']) ?></strong>
+        berdasarkan setiap kriteria di bawah ini.
     </div>
 
     <form action="<?= BASEURL; ?>/penilaian/prosesAlternatif" method="post">
-        <input type="hidden" name="id_kriteria" value="<?= $kriteria['id_kriteria'] ?>">
+        <input type="hidden" name="id_alternatif" value="<?= $targetAlternatif['id_alternatif'] ?>">
 
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th class="text-right" style="width: 35%;">Alternatif A</th>
-                        <th class="text-center" style="width: 30%;">Nilai Perbandingan</th>
-                        <th class="text-left" style="width: 35%;">Alternatif B</th>
+                        <th style="width: 50px;">No</th>
+                        <th>Kriteria Penilaian</th>
+                        <th style="width: 200px;">Nilai Input</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php
-                    $n = count($alternatif);
-                    if ($n < 2): ?>
+                    <?php if (empty($kriteriaList)): ?>
                         <tr>
-                            <td colspan="3" class="text-center">Minimal harus ada 2 alternatif data.</td>
+                            <td colspan="3" class="text-center">Belum ada data kriteria.</td>
                         </tr>
-                    <?php else:
-                        for ($i = 0; $i < $n; $i++):
-                            for ($j = $i + 1; $j < $n; $j++):
-                                $a1 = $alternatif[$i];
-                                $a2 = $alternatif[$j];
-
-                                // Ambil Value Lama (Pre-fill)
-                                $val = isset($existing[$a1['id_alternatif']][$a2['id_alternatif']])
-                                    ? $existing[$a1['id_alternatif']][$a2['id_alternatif']]
-                                    : '';
-                                ?>
-                                <tr>
-                                    <td class="text-right" style="vertical-align: middle;">
-                                        <?php if (!empty($a1['gambar'])): ?>
-                                            <img src="<?= BASEURL ?>/assets/img/alternatif/<?= $a1['gambar'] ?>" class="img-tiny mr-1">
-                                        <?php endif; ?>
-                                        <strong><?= htmlspecialchars($a1['nama_alternatif']) ?></strong>
-                                    </td>
-
-                                    <td class="text-center">
-                                        <input type="number" step="0.0001" min="0.1" max="9" class="input text-center input-primary"
-                                            name="nilai[<?= $a1['id_alternatif'] ?>][<?= $a2['id_alternatif'] ?>]"
-                                            value="<?= $val ?>" placeholder="Nilai" required
-                                            style="width: 100px; border: 2px solid #2e7d32;">
-                                    </td>
-
-                                    <td class="text-left" style="vertical-align: middle;">
-                                        <strong><?= htmlspecialchars($a2['nama_alternatif']) ?></strong>
-                                        <?php if (!empty($a2['gambar'])): ?>
-                                            <img src="<?= BASEURL ?>/assets/img/alternatif/<?= $a2['gambar'] ?>" class="img-tiny ml-1">
-                                        <?php endif; ?>
-                                    </td>
-                                </tr>
-                            <?php
-                            endfor;
-                        endfor;
-                    endif;
-                    ?>
+                    <?php else: ?>
+                        <?php $no = 1;
+                        foreach ($kriteriaList as $k):
+                            // Ambil nilai lama jika ada
+                            $id_k = $k['id_kriteria'];
+                            $val = isset($existing[$id_k]) ? $existing[$id_k] : '';
+                            ?>
+                            <tr>
+                                <td class="text-center"><?= $no++; ?></td>
+                                <td style="vertical-align: middle;">
+                                    <strong><?= htmlspecialchars($k['nama_kriteria']) ?></strong>
+                                    <br>
+                                    <small class="text-muted">Nilai
+                                        <?= htmlspecialchars($targetAlternatif['nama_alternatif']) ?> dari segi
+                                        <?= htmlspecialchars($k['nama_kriteria']) ?></small>
+                                </td>
+                                <td>
+                                    <input type="number" step="0.01" class="input text-center input-primary"
+                                        name="nilai[<?= $k['id_kriteria'] ?>]" value="<?= $val ?>" placeholder="0" required
+                                        style="border: 2px solid #2e7d32; font-weight: bold;">
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>
 
-        <?php if ($n >= 2): ?>
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Simpan & Lanjut</button>
-                <a href="<?= BASEURL; ?>/penilaian" class="btn btn-secondary ml-2">Batal</a>
-            </div>
-        <?php endif; ?>
+        <div class="form-actions" style="margin-top: 30px; text-align: center;">
+            <button type="submit" class="btn btn-primary" style="padding: 12px 40px; font-size: 16px;">
+                Simpan Penilaian <?= htmlspecialchars($targetAlternatif['nama_alternatif']) ?>
+            </button>
+            <a href="<?= BASEURL; ?>/penilaian" class="btn btn-secondary ml-2">Kembali</a>
+        </div>
     </form>
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        // Opsional: Highlight baris saat input difokuskan
         const inputs = document.querySelectorAll('.input-primary');
         inputs.forEach(input => {
             input.addEventListener('focus', function () {
