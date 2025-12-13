@@ -453,3 +453,234 @@ a {
     /* Membuat posisi di tengah sel tabel */
     margin: 0 auto; 
 }
+
+/* =========================================
+   12. TAMBAHAN KHUSUS AHP (REVISI)
+   ========================================= */
+
+/* Box untuk Langkah-langkah di Dashboard */
+.step-box {
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+    padding: 20px;
+    border-radius: var(--radius);
+    background-color: #fafafa;
+}
+
+.step-box h3 {
+    font-size: 1.1rem;
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+/* Alert kecil inline */
+.alert-inline {
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 5px 10px;
+    font-size: 0.85em;
+    font-weight: 500;
+}
+
+/* Text Utilities */
+.text-success { color: #27ae60; font-weight: bold; }
+.text-danger  { color: #c0392b; font-weight: bold; }
+.text-center  { text-align: center; }
+.text-right   { text-align: right; }
+.text-left    { text-align: left; }
+
+/* Table Pairwise Layout */
+.table-pairwise td { vertical-align: middle; }
+.col-label { width: 30%; font-weight: 500; }
+.col-input { width: 40%; }
+
+/* Input Select Wrapper */
+.select-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    align-items: center;
+}
+
+/* Warna Latar Option (Visualisasi Invers) */
+.opt-inverse { background-color: #fce4ec; color: #c2185b; } /* Merah muda */
+.opt-primary { background-color: #e3f2fd; color: #1565c0; } /* Biru muda */
+
+/* Gambar Kecil di Tabel */
+.img-tiny {
+    width: 30px;
+    height: 30px;
+    vertical-align: middle;
+    border-radius: 4px;
+    object-fit: cover;
+}
+.mr-1 { margin-right: 5px; }
+.ml-1 { margin-left: 5px; }
+
+/* Wrapper tombol aksi form */
+.form-actions {
+    margin-top: 25px;
+    text-align: center;
+    padding-top: 15px;
+    border-top: 1px solid var(--border);
+}
+
+/* =========================================
+   13. STYLE KHUSUS MATRIKS INPUT (AHP)
+   ========================================= */
+
+/* Inputan Angka di dalam Sel Tabel */
+.matrix-input {
+    width: 80px;
+    text-align: center;
+    padding: 5px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.matrix-input:focus {
+    border-color: var(--primary);
+    outline: none;
+    background-color: #e8f5e9; /* Hijau pudar saat fokus */
+    box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.1);
+}
+
+/* Sel Readonly (Segitiga Bawah) */
+.readonly-cell {
+    background-color: #f5f5f5;
+    color: #999;
+    pointer-events: none; /* Tidak bisa diklik */
+    border-color: #eee;
+}
+
+/* Sel Diagonal (Nilai 1) */
+.diagonal-cell {
+    background-color: #e0e0e0;
+    font-weight: bold;
+    color: #555;
+    border-color: #ccc;
+}
+
+/* Penyesuaian Tabel Matriks */
+.table-matrix th {
+    vertical-align: middle;
+    text-align: center;
+    font-size: 0.85rem;
+    background-color: #f8f9fa; /* Header abu-abu muda */
+    color: var(--text-main);
+}
+
+.table-matrix td {
+    vertical-align: middle;
+    text-align: center;
+    padding: 8px;
+}
+
+/* Header Kolom & Baris agar lebih jelas */
+.header-col {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+.header-row {
+    text-align: left !important;
+    background-color: #f8f9fa;
+    width: 200px; /* Lebar kolom nama kriteria */
+}
+
+/* =========================================
+   14. STYLE KHUSUS HALAMAN DETAIL (CRUD)
+   ========================================= */
+
+/* Jarak antar section */
+.section-gap {
+    margin-top: 20px;
+}
+
+/* Wrapper untuk Kriteria di bagian Alternatif */
+.criteria-wrapper {
+    border: 1px solid var(--border);
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    background-color: #fff;
+    transition: box-shadow 0.3s ease;
+}
+
+.criteria-wrapper:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* Judul Kriteria dalam wrapper */
+.criteria-title {
+    margin-bottom: 10px;
+    color: var(--primary);
+    font-size: 1.1em;
+    font-weight: 600;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 5px;
+}
+
+/* Container Tabel Scrollable (untuk data banyak) */
+.table-scroll-container {
+    max-height: 250px;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+
+/* Tabel Ukuran Kecil */
+.table-sm {
+    font-size: 0.9em;
+    margin-top: 0; /* Override default table margin */
+}
+
+.table-sm th, .table-sm td {
+    padding: 8px 10px;
+}
+
+.table-header-gray {
+    background-color: #f8f9fa;
+    color: var(--text-main);
+}
+
+/* Tombol-tombol aksi CRUD */
+.action-buttons {
+    margin-top: 12px;
+    display: flex;
+    gap: 8px;
+}
+
+/* Teks bantuan jika kosong */
+.empty-state-text {
+    color: #7f8c8d;
+    font-size: 0.9em;
+    margin-bottom: 10px;
+    font-style: italic;
+}
+
+/* ... CSS yang sudah ada sebelumnya ... */
+
+/* =========================================
+   15. STYLE TAMBAHAN (ALERT WARNING)
+   ========================================= */
+
+.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+    padding: 12px 15px;
+    border-radius: var(--radius);
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+/* Memastikan wrapper kriteria terlihat rapi */
+.criteria-wrapper {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 20px;
+}

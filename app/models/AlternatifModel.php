@@ -6,7 +6,7 @@ class AlternatifModel extends Model
 
     public function getAllAlternatif()
     {
-        return $this->db->query("SELECT * FROM " . $this->table)->fetchAll();
+        return $this->db->query("SELECT * FROM " . $this->table . " ORDER BY id_alternatif ASC")->fetchAll();
     }
 
     public function getAlternatifById($id)
@@ -19,27 +19,41 @@ class AlternatifModel extends Model
 
     public function tambahDataAlternatif($data)
     {
-        $query = "INSERT INTO " . $this->table . " (kode_alternatif, nama_alternatif, gambar) VALUES (:kode, :nama, :gambar)";
+        // REVISI: Menambahkan kolom ladang dan tgl_tanam
+        $query = "INSERT INTO " . $this->table . " 
+                  (kode_alternatif, nama_alternatif, ladang, tgl_tanam, gambar) 
+                  VALUES (:kode, :nama, :ladang, :tgl, :gambar)";
+
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':kode', $data['kode_alternatif']);
         $stmt->bindValue(':nama', $data['nama_alternatif']);
+        $stmt->bindValue(':ladang', $data['ladang']);         // Kolom Baru
+        $stmt->bindValue(':tgl', $data['tgl_tanam']);         // Kolom Baru
         $stmt->bindValue(':gambar', $data['gambar']);
+
         $stmt->execute();
         return $stmt->rowCount();
     }
 
     public function ubahDataAlternatif($data)
     {
+        // REVISI: Update kolom ladang dan tgl_tanam
         $query = "UPDATE " . $this->table . " SET 
                     kode_alternatif = :kode,
                     nama_alternatif = :nama,
+                    ladang = :ladang,
+                    tgl_tanam = :tgl,
                     gambar = :gambar
                   WHERE id_alternatif = :id";
+
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':kode', $data['kode_alternatif']);
         $stmt->bindValue(':nama', $data['nama_alternatif']);
+        $stmt->bindValue(':ladang', $data['ladang']);         // Kolom Baru
+        $stmt->bindValue(':tgl', $data['tgl_tanam']);         // Kolom Baru
         $stmt->bindValue(':gambar', $data['gambar']);
         $stmt->bindValue(':id', $data['id_alternatif']);
+
         $stmt->execute();
         return $stmt->rowCount();
     }

@@ -17,7 +17,7 @@
     $isLoggedIn = !empty($_SESSION['user_id']);
     $role = $_SESSION['user_role'] ?? '';
 
-    // Logika deteksi URL aktif
+    // Logika deteksi URL aktif untuk styling navbar
     $current_uri = $_SERVER['REQUEST_URI'];
     $isAuthPage = (stripos($current_uri, 'auth') !== false) ||
         (stripos($current_uri, 'login') !== false) ||
@@ -25,6 +25,7 @@
         ($current_uri == str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) . '/') ||
         ($current_uri === '/');
 
+    // Helper function active class
     $isActive = function ($keyword) use ($current_uri) {
         return (stripos($current_uri, $keyword) !== false) ? 'active' : '';
     };
@@ -43,20 +44,33 @@
                         <a href="<?= BASEURL; ?>/masterdata/kriteria"
                             class="<?= $isActive('/masterdata/kriteria') ?>">Kriteria</a>
                         <a href="<?= BASEURL; ?>/masterdata/alternatif"
-                            class="<?= $isActive('/masterdata/alternatif') ?>">Alternatif</a>
+                            class="<?= $isActive('/masterdata/alternatif') ?>">Alternatif (Master)</a>
                     <?php endif; ?>
 
-                    <a href="<?= BASEURL; ?>/penilaian/form" class="<?= $isActive('/penilaian') ?>">Input Nilai</a>
+                    <?php if ($role === 'farmer'): ?>
+                        <a href="<?= BASEURL; ?>/petani" class="<?= $isActive('/petani') ?>">Data Tanaman Saya</a>
 
-                    <?php if ($role === 'admin' || $role === 'ketua'): ?>
+                        <a href="<?= BASEURL; ?>/penilaian"
+                            class="<?= $isActive('/penilaian') && !$isActive('/penilaian/detail') ? 'active' : '' ?>">Input
+                            Penilaian</a>
+                        <a href="<?= BASEURL; ?>/penilaian/detail" class="<?= $isActive('/penilaian/detail') ?>">Detail
+                            Penilaian Saya</a>
+                    <?php endif; ?>
+
+                    <?php if ($role === 'ketua'): ?>
+                        <a href="<?= BASEURL; ?>/penilaian"
+                            class="<?= $isActive('/penilaian') && !$isActive('/penilaian/detail') ? 'active' : '' ?>">Input
+                            Penilaian</a>
+                        <a href="<?= BASEURL; ?>/penilaian/detail" class="<?= $isActive('/penilaian/detail') ?>">Detail
+                            Penilaian Saya</a>
 
                         <a href="<?= BASEURL; ?>/proses" class="<?= $isActive('/proses') ?>">Proses Hitung</a>
+                    <?php endif; ?>
 
-                        <a href="<?= BASEURL; ?>/laporan/hasil" class="<?= $isActive('/laporan/hasil') ?>">Hasil Akhir</a>
-                        <a href="<?= BASEURL; ?>/laporan/detail" class="<?= $isActive('/laporan/detail') ?>">Detail</a>
-                        <a href="<?= BASEURL; ?>/laporan/perhitungan"
-                            class="<?= $isActive('/laporan/perhitungan') ?>">Perhitungan</a>
+                    <a href="<?= BASEURL; ?>/laporan/hasil" class="<?= $isActive('/laporan/hasil') ?>">Hasil Ranking</a>
 
+                    <?php if ($role === 'admin' || $role === 'ketua'): ?>
+                        <a href="<?= BASEURL; ?>/laporan/detail" class="<?= $isActive('/laporan/detail') ?>">Laporan Lengkap</a>
                     <?php endif; ?>
 
                     <a href="<?= BASEURL; ?>/auth/logout" onclick="return confirm('Yakin ingin keluar?');"
@@ -68,12 +82,11 @@
 
     <main class="container">
         <?php
-        // Cek apakah ada flash message dan pastikan itu adalah array
+        // Flash Message System
         if (isset($_SESSION['flash']) && is_array($_SESSION['flash'])):
             ?>
             <?php foreach ($_SESSION['flash'] as $key => $message): ?>
                 <?php
-                // Tentukan kelas alert berdasarkan key (success, error, info)
                 $alertClass = 'alert-info';
                 if ($key === 'success')
                     $alertClass = 'alert-success';
@@ -84,8 +97,9 @@
                     <?= htmlspecialchars($message); ?>
                 </div>
             <?php endforeach; ?>
-            <?php unset($_SESSION['flash']); // Hapus array flash setelah ditampilkan ?>
+            <?php unset($_SESSION['flash']); ?>
         <?php endif; ?>
+
         <?= $content ?>
     </main>
 

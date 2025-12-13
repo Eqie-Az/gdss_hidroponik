@@ -1,7 +1,9 @@
 <?php $title = $title ?? 'Edit Pengguna'; ?>
 
-<div class="card card-center">
-    <h2>Edit Pengguna</h2>
+<h2><?= htmlspecialchars($title) ?></h2>
+
+<div class="card mt-2">
+    <h3>Form Edit Pengguna</h3>
 
     <form action="<?= BASEURL; ?>/masterdata/updatePengguna" method="post">
         <input type="hidden" name="id_pengguna" value="<?= $data['id_pengguna']; ?>">
@@ -28,13 +30,14 @@
             <label>Role</label>
             <select class="input" name="peran">
                 <option value="farmer" <?= ($data['role'] == 'farmer') ? 'selected' : ''; ?>>Farmer Hydroponic (DM)
-                </option>   
+                </option>
                 <option value="ketua" <?= ($data['role'] == 'ketua') ? 'selected' : ''; ?>>Ketua</option>
                 <option value="admin" <?= ($data['role'] == 'admin') ? 'selected' : ''; ?>>Admin</option>
             </select>
         </div>
 
         <button class="btn btn-primary" type="submit">Simpan Perubahan</button>
-        <a href="<?= BASEURL; ?>/masterdata/pengguna" class="ml-2 text-muted">Batal</a>
+
+        <a href="<?= BASEURL; ?>/masterdata/pengguna" class="btn btn-secondary ml-2">Batal</a>
     </form>
 </div>
