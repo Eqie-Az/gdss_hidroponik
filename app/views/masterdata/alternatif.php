@@ -1,4 +1,23 @@
-<?php $title = $title ?? 'Master Alternatif'; ?>
+<?php
+// --- UPDATE KEAMANAN: CEK AKSES DI SINI ---
+// Pastikan session terbaca
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Cek apakah user memiliki role 'admin'
+// Jika session kosong ATAU role bukan admin, tendang ke dashboard
+if (empty($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    echo "<script>
+        alert('AKSES DITOLAK: Anda tidak memiliki izin mengakses halaman Master Alternatif.');
+        window.location.href = '" . BASEURL . "/Dashboard'; 
+    </script>";
+    exit(); // Stop script agar tabel di bawah tidak dimuat
+}
+// --- BATAS AKHIR UPDATE KEAMANAN ---
+
+$title = $title ?? 'Master Alternatif';
+?>
 
 <?php if ($msg = $this->getFlash('success')): ?>
     <div class="alert-success"><?= htmlspecialchars($msg) ?></div>

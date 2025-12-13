@@ -17,9 +17,8 @@
 
     <div class="alert-info alert-inline" style="margin-bottom: 20px;">
         <strong>Instruksi:</strong><br>
-        Silakan beri nilai (Rating) untuk tanaman
-        <strong><?= htmlspecialchars($targetAlternatif['nama_alternatif']) ?></strong>
-        berdasarkan setiap kriteria di bawah ini.
+        Masukkan nilai rating untuk tanaman ini berdasarkan data Excel.<br>
+        Gunakan <strong>TITIK (.)</strong> untuk desimal (Contoh: 0.41).
     </div>
 
     <form action="<?= BASEURL; ?>/penilaian/prosesAlternatif" method="post">
@@ -42,7 +41,6 @@
                     <?php else: ?>
                         <?php $no = 1;
                         foreach ($kriteriaList as $k):
-                            // Ambil nilai lama jika ada
                             $id_k = $k['id_kriteria'];
                             $val = isset($existing[$id_k]) ? $existing[$id_k] : '';
                             ?>
@@ -50,15 +48,11 @@
                                 <td class="text-center"><?= $no++; ?></td>
                                 <td style="vertical-align: middle;">
                                     <strong><?= htmlspecialchars($k['nama_kriteria']) ?></strong>
-                                    <br>
-                                    <small class="text-muted">Nilai
-                                        <?= htmlspecialchars($targetAlternatif['nama_alternatif']) ?> dari segi
-                                        <?= htmlspecialchars($k['nama_kriteria']) ?></small>
                                 </td>
                                 <td>
-                                    <input type="number" step="0.01" class="input text-center input-primary"
+                                    <input type="text" inputmode="decimal" class="input text-center input-primary"
                                         name="nilai[<?= $k['id_kriteria'] ?>]" value="<?= $val ?>" placeholder="0" required
-                                        style="border: 2px solid #2e7d32; font-weight: bold;">
+                                        autocomplete="off" style="border: 2px solid #2e7d32; font-weight: bold;">
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -69,7 +63,7 @@
 
         <div class="form-actions" style="margin-top: 30px; text-align: center;">
             <button type="submit" class="btn btn-primary" style="padding: 12px 40px; font-size: 16px;">
-                Simpan Penilaian <?= htmlspecialchars($targetAlternatif['nama_alternatif']) ?>
+                Simpan Penilaian
             </button>
             <a href="<?= BASEURL; ?>/penilaian" class="btn btn-secondary ml-2">Kembali</a>
         </div>
@@ -80,11 +74,20 @@
     document.addEventListener("DOMContentLoaded", function () {
         const inputs = document.querySelectorAll('.input-primary');
         inputs.forEach(input => {
+            // Highlight saat fokus
             input.addEventListener('focus', function () {
                 this.closest('tr').style.backgroundColor = '#e8f5e9';
             });
             input.addEventListener('blur', function () {
                 this.closest('tr').style.backgroundColor = '';
+            });
+
+            // Validasi Input: Hanya boleh Angka dan Titik
+            input.addEventListener('input', function () {
+                // Ganti koma jadi titik
+                this.value = this.value.replace(/,/g, '.');
+                // Hapus karakter non-angka dan non-titik
+                this.value = this.value.replace(/[^0-9.]/g, '');
             });
         });
     });

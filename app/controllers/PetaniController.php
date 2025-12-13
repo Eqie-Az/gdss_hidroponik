@@ -2,28 +2,32 @@
 
 class PetaniController extends Controller
 {
-    // REVISI: CRUD Data DM (Petani Mengelola Tanaman Sendiri)
+    // REVISI: Mengubah hak akses dari 'farmer' menjadi 'admin'
+    // Agar hanya admin yang bisa mengakses controller ini
+
     public function index()
     {
-        $this->requireRole(['farmer']);
+        // UBAH DARI 'farmer' KE 'admin'
+        $this->requireRole(['admin']);
 
-        // Asumsi: Semua petani melihat data alternatif yang sama (Master).
-        // Jika ingin data privat, query harus difilter WHERE id_pengguna = session
+        // Asumsi: Admin melihat data alternatif (Master).
         $data['tanaman'] = $this->model('AlternatifModel')->getAllAlternatif();
-        $data['title'] = 'Kelola Data Tanaman Saya';
+        $data['title'] = 'Kelola Data Tanaman (Mode Petani)';
 
         $this->view('petani/index', $data);
     }
 
     public function tambah()
     {
-        $this->requireRole(['farmer']);
+        // UBAH DARI 'farmer' KE 'admin'
+        $this->requireRole(['admin']);
         $this->view('petani/tambah', ['title' => 'Tambah Tanaman']);
     }
 
     public function simpan()
     {
-        $this->requireRole(['farmer']);
+        // UBAH DARI 'farmer' KE 'admin'
+        $this->requireRole(['admin']);
 
         // Upload Gambar
         $gambar = null;
@@ -54,7 +58,8 @@ class PetaniController extends Controller
 
     public function edit($id)
     {
-        $this->requireRole(['farmer']);
+        // UBAH DARI 'farmer' KE 'admin'
+        $this->requireRole(['admin']);
         $data['dt'] = $this->model('AlternatifModel')->getAlternatifById($id);
         $data['title'] = 'Edit Data Tanaman';
         $this->view('petani/edit', $data);
@@ -62,7 +67,8 @@ class PetaniController extends Controller
 
     public function update()
     {
-        $this->requireRole(['farmer']);
+        // UBAH DARI 'farmer' KE 'admin'
+        $this->requireRole(['admin']);
         $id = $_POST['id'];
         $old = $this->model('AlternatifModel')->getAlternatifById($id);
 
@@ -90,7 +96,8 @@ class PetaniController extends Controller
 
     public function hapus($id)
     {
-        $this->requireRole(['farmer']);
+        // UBAH DARI 'farmer' KE 'admin'
+        $this->requireRole(['admin']);
         $this->model('AlternatifModel')->hapusDataAlternatif($id);
         $this->setFlash('success', 'Data dihapus');
         header('Location: ' . BASEURL . '/petani');

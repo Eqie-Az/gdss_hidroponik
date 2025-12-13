@@ -43,15 +43,16 @@
                         <a href="<?= BASEURL; ?>/masterdata/pengguna" class="<?= $isActive('/masterdata/pengguna') ?>">User</a>
                         <a href="<?= BASEURL; ?>/masterdata/kriteria"
                             class="<?= $isActive('/masterdata/kriteria') ?>">Kriteria</a>
+
                         <a href="<?= BASEURL; ?>/masterdata/alternatif"
                             class="<?= $isActive('/masterdata/alternatif') ?>">Alternatif (Master)</a>
+
+                        <a href="<?= BASEURL; ?>/petani" class="<?= $isActive('/petani') ?>">Kelola Tanaman (View Petani)</a>
 
                         <a href="<?= BASEURL; ?>/laporan/detail" class="<?= $isActive('/laporan/detail') ?>">Laporan Lengkap</a>
                     <?php endif; ?>
 
                     <?php if ($role === 'farmer'): ?>
-                        <a href="<?= BASEURL; ?>/petani" class="<?= $isActive('/petani') ?>">Data Tanaman Saya</a>
-
                         <a href="<?= BASEURL; ?>/penilaian"
                             class="<?= $isActive('/penilaian') && !$isActive('/penilaian/detail') ? 'active' : '' ?>">Input
                             Penilaian</a>
