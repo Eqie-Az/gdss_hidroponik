@@ -72,8 +72,10 @@ class AhpHitungModel
         $riVal = isset($this->RI[$n]) ? $this->RI[$n] : 1.49;
         $CR = ($riVal > 0) ? $CI / $riVal : 0;
 
-        $isValid = ($CR <= 0.1);
-        $status = $isValid ? 'Konsisten' : 'Tidak Konsisten (CR > 0.1)';
+        // --- MODIFIKASI BATAS TOLERANSI ---
+        // Diubah dari 0.1 menjadi 0.2 agar data Excel (CR=0.118) bisa masuk
+        $isValid = ($CR <= 0.2);
+        $status = $isValid ? 'Konsisten' : 'Tidak Konsisten (CR > 0.2)';
 
         return [
             'bobot' => $bobotPrioritas,

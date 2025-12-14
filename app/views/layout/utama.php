@@ -50,6 +50,9 @@
                         <a href="<?= BASEURL; ?>/petani" class="<?= $isActive('/petani') ?>">Kelola Tanaman (View Petani)</a>
 
                         <a href="<?= BASEURL; ?>/laporan/detail" class="<?= $isActive('/laporan/detail') ?>">Laporan Lengkap</a>
+
+                        <a href="<?= BASEURL; ?>/laporan/bobot" class="<?= $isActive('/laporan/bobot') ?>">Detail Perhitungan
+                            Bobot</a>
                     <?php endif; ?>
 
                     <?php if ($role === 'farmer'): ?>
@@ -70,6 +73,9 @@
                         <a href="<?= BASEURL; ?>/laporan/detail" class="<?= $isActive('/laporan/detail') ?>">Laporan Lengkap</a>
 
                         <a href="<?= BASEURL; ?>/proses" class="<?= $isActive('/proses') ?>">Proses Hitung</a>
+
+                        <a href="<?= BASEURL; ?>/laporan/bobot" class="<?= $isActive('/laporan/bobot') ?>">Detail Perhitungan
+                            Bobot</a>
                     <?php endif; ?>
 
                     <a href="<?= BASEURL; ?>/laporan/hasil" class="<?= $isActive('/laporan/hasil') ?>">Hasil Ranking</a>

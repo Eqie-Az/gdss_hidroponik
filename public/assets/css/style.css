@@ -684,3 +684,110 @@ a {
     padding: 15px;
     margin-bottom: 20px;
 }
+
+/* ... (Kode CSS lama biarkan di atas) ... */
+
+/* =========================================
+   16. STYLE KHUSUS LAPORAN PERHITUNGAN BOBOT
+   ========================================= */
+
+/* Card Container per DM */
+.card-calculation {
+    margin-bottom: 40px;
+    border-left: 5px solid var(--primary); /* Aksen Hijau Kiri */
+}
+
+.divider {
+    border: 0;
+    border-top: 1px solid #eee;
+    margin: 15px 0 20px 0;
+}
+
+/* Judul Section (1. Matriks..., 2. Normalisasi...) */
+.section-title {
+    margin-top: 30px;
+    font-size: 1rem;
+    color: var(--text-main);
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+/* Tabel Matriks */
+.table-matrix th, 
+.table-matrix td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Header Warna Hijau (Matriks Asli) */
+.bg-header-green {
+    background-color: #f1f8e9;
+    color: var(--primary-dark);
+}
+
+/* Header Warna Biru (Normalisasi) */
+.bg-header-blue {
+    background-color: #e3f2fd;
+    color: #1565c0;
+}
+
+/* Kolom Kriteria (Kiri) */
+.col-kriteria {
+    text-align: left !important;
+    background-color: #fafafa;
+    font-weight: 600;
+    color: #444;
+}
+
+.col-kriteria-code {
+    text-align: left !important;
+    background-color: #fafafa;
+    font-weight: 600;
+}
+
+/* Baris Total */
+.bg-row-total {
+    background-color: #e8f5e9;
+    font-weight: 700;
+    color: var(--primary-dark);
+}
+
+/* Kolom Bobot (Hasil Akhir) */
+.col-header-weight {
+    background-color: #2196f3 !important;
+    color: #fff !important;
+}
+
+.col-weight-value {
+    background-color: #e3f2fd;
+    color: #1565c0;
+    font-weight: 700;
+}
+
+/* Kotak Konsistensi */
+.consistency-box {
+    max-width: 500px;
+    background: #fff;
+    border-radius: var(--radius);
+}
+
+/* Status Badge (Konsisten/Tidak) */
+.status-badge {
+    font-size: 0.85em;
+    margin-left: 5px;
+    font-weight: normal;
+    color: #555;
+}
+
+/* Utilitas Teks */
+.font-bold {
+    font-weight: 700;
+}
+
+.text-success {
+    color: #2e7d32 !important;
+}
+
+.text-danger {
+    color: #c62828 !important;
+}
